@@ -40,6 +40,22 @@ pub enum TokenType {
     /// This instructions is used to jump to a different instruction in the FVM’s state via FVM’s pointer.
     #[token("jump")]
     Jump,
+
+    /// Macro reserved keyword.
+    #[token("macro")]
+    Macro,
+
+    /// Open brace token.
+    #[token("{")]
+    OpenBrace,
+
+    /// Close brace token.
+	#[token("}")]
+    CloseBrace,
+
+    /// Identifier. Alphanumeric, including underscores.
+    #[regex("[a-zA-Z_]+")]
+    Identifier,
     
     /// Unrecognized or erroneous token.
     #[error]
