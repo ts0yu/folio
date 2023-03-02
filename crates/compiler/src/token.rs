@@ -4,7 +4,7 @@ use logos::Logos;
 /// All opcode descriptions are taken from the FVM Yellowpaper.
 #[derive(Logos, Debug, PartialEq, Clone, Copy)]
 pub enum TokenType {
-    /// This is the default opcode. It is used to represent an unknown opcode, 
+    /// This is the default opcode. It is used to represent an unknown opcode,
     /// and is used to initialize the FVM’s state.
     #[token("unknown")]
     Unknown,
@@ -14,7 +14,7 @@ pub enum TokenType {
     #[token("allocate")]
     Allocate,
 
-    /// This instruction is used to remove liquidity from a pool. 
+    /// This instruction is used to remove liquidity from a pool.
     /// It maintains invariant pricing for each pool that is interacted with.
     #[token("deallocate")]
     Deallocate,
@@ -50,13 +50,13 @@ pub enum TokenType {
     OpenBrace,
 
     /// Close brace token.
-	#[token("}")]
+    #[token("}")]
     CloseBrace,
 
     /// Identifier. Alphanumeric, including underscores.
     #[regex("[a-zA-Z_]+")]
     Identifier,
-    
+
     /// Unrecognized or erroneous token.
     #[error]
     #[regex(r"[ \t\n\f]+", logos::skip)]

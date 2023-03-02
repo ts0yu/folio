@@ -1,15 +1,10 @@
+use std::{collections::HashMap, fs, time::Instant};
+
 use clap::{Parser, Subcommand};
 use colored::*;
-
 use compiler::{
-	assembler::{Assembler, Macro},
-	token::{Token, TokenType}
-};
-
-use std::{
-	fs, 
-	time::Instant,
-	collections::HashMap
+    assembler::{Assembler, Macro},
+    token::{Token, TokenType},
 };
 
 #[derive(Parser)]
@@ -21,7 +16,7 @@ struct Value {
 
 #[derive(Subcommand)]
 enum Commands {
-    Run { path: String },
+    Build { path: String },
 }
 
 fn main() {

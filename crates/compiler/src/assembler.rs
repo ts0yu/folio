@@ -1,10 +1,9 @@
-use crate::token::Token;
-use crate::token::TokenType;
+use std::{cell::Cell, collections::HashMap};
 
-use crate::opcode::Opcode;
-
-use std::collections::HashMap;
-use std::cell::Cell;
+use crate::{
+    opcode::Opcode,
+    token::{Token, TokenType},
+};
 
 /// Type representing an Opcode parser.
 #[derive(Debug)]
@@ -66,27 +65,26 @@ impl<'a> Assembler<'a> {
         }
     }
 
-        /// Parse tokens to Opcodes.
-        pub fn assemble(&self) -> Vec<Opcode> {
-            let mut opcodes = Vec::new();
-            for (index, token) in self.tokens.iter().enumerate() {
-                match token.ttype {
+    /// Parse tokens to Opcodes.
+    pub fn assemble(&self) -> Vec<Opcode> {
+        let mut opcodes = Vec::new();
+        for (index, token) in self.tokens.iter().enumerate() {
+            match token.ttype {
+                TokenType::Unknown => opcodes.push(Opcode::Unknown),
+                TokenType::Allocate => opcodes.push(Opcode::Allocate),
+                TokenType::Deallocate => opcodes.push(Opcode::Deallocate),
+                TokenType::Claim => opcodes.push(Opcode::Claim),
+                TokenType::Swap => opcodes.push(Opcode::Swap),
+                TokenType::CreatePool => opcodes.push(Opcode::CreatePool),
+                TokenType::CreatePair => opcodes.push(Opcode::CreatePair),
+                TokenType::Jump => opcodes.push(Opcode::Jump),
 
-                    TokenType::Unknown => opcodes.push(Opcode::Unknown),
-                    TokenType::Allocate => opcodes.push(Opcode::Allocate),
-                    TokenType::Deallocate => opcodes.push(Opcode::Deallocate),
-                    TokenType::Claim => opcodes.push(Opcode::Claim),
-                    TokenType::Swap => opcodes.push(Opcode::Swap),
-                    TokenType::CreatePool => opcodes.push(Opcode::CreatePool),
-                    TokenType::CreatePair => opcodes.push(Opcode::CreatePair),
-                    TokenType::Jump => opcodes.push(Opcode::Jump),
+                TokenType::Identifier => continue,
+                TokenType::Error => continue,
 
-                    TokenType::Identifier => continue,
-                    TokenType::Error => continue,
-
-                    _ => panic!("test"),
-                }
+                _ => panic!("test"),
             }
-            opcodes
         }
+        opcodes
+    }
 }
