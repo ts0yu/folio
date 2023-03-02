@@ -23,7 +23,7 @@ fn main() {
     let value = Value::parse();
 
     match &value.command {
-        Commands::Run { path } => {
+        Commands::Build { path } => {
             let contents = fs::read_to_string(path).unwrap();
             let tokens = Token::lex(&contents);
             let mut main_macro: Macro = Macro {
