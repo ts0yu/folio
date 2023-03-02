@@ -74,8 +74,6 @@ impl<'a> Token<'a> {
             tokens.push(Self::new(z.unwrap(), lex.slice()));
         }
 
-        // tokens.push(Token::new(TokenType::Eof, ""));
-
         tokens
     }
 }
