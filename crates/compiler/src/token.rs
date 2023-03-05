@@ -4,58 +4,56 @@ use logos::Logos;
 /// All opcode descriptions are taken from the FVM Yellowpaper.
 #[derive(Logos, Debug, PartialEq, Clone, Copy)]
 pub enum TokenType {
-    /// This is the default opcode. It is used to represent an unknown opcode,
-    /// and is used to initialize the FVM’s state.
     #[token("unknown")]
     Unknown,
 
-    /// This instruction is used to add liquidity to a pool.
-    /// It maintains invariant pricing for each pool that is interacted with.
     #[token("allocate")]
     Allocate,
 
-    /// This instruction is used to remove liquidity from a pool.
-    /// It maintains invariant pricing for each pool that is interacted with.
     #[token("deallocate")]
     Deallocate,
 
-    /// Collects all the fees generated from a positive invariant for.
     #[token("claim")]
     Claim,
 
-    /// This instruction is used to swap between the tokens.
-    /// It maintains the invariant of the trading curve.
     #[token("swap")]
     Swap,
 
-    /// This instruction is used to create a new pool.
-    /// Initially, pools are not deployed with any capital, but are deployed with parameters for the CFMM as well as an initial price.
     #[token("create_pool")]
     CreatePool,
 
-    /// This instruction is used to initialize a new pair of assets for which pools can be created.
     #[token("create_pair")]
     CreatePair,
 
-    /// This instructions is used to jump to a different instruction in the FVM’s state via FVM’s pointer.
     #[token("jump")]
     Jump,
 
-    /// Macro reserved keyword.
     #[token("macro")]
     Macro,
 
-    /// Open brace token.
     #[token("{")]
     OpenBrace,
 
-    /// Close brace token.
     #[token("}")]
     CloseBrace,
 
-    /// Identifier. Alphanumeric, including underscores.
+    #[token(":")]
+    Colon,
+
+    #[token("poolId")]
+    PoolId,
+
+    #[token("fee0")]
+    Fee0,
+
+    #[token("fee1")]
+    Fee1,
+
     #[regex("[a-zA-Z_]+")]
     Identifier,
+
+    #[regex("[+-]?([0-9]*[.])?[0-9]+")]
+    Literal,
 
     /// Unrecognized or erroneous token.
     #[error]
@@ -87,7 +85,9 @@ impl<'a> Token<'a> {
             if z == None {
                 break;
             }
-            tokens.push(Self::new(z.unwrap(), lex.slice()));
+            if !(z.unwrap() == TokenType::Error) {
+                tokens.push(Self::new(z.unwrap(), lex.slice()))
+            };
         }
 
         tokens

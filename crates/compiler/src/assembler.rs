@@ -20,7 +20,7 @@ pub struct Macro<'a> {
     /// Macro name.
     pub name: &'a str,
     /// Body of the macro: the opcodes inside of it.
-    pub body: Vec<Token<'a>>,
+    pub body: Vec<Opcode<'a>>,
 }
 
 impl<'a> Assembler<'a> {
@@ -34,8 +34,10 @@ impl<'a> Assembler<'a> {
 
     /// Expand all macros.
     pub fn parse_macro(&self) -> Result<Macro<'a>, ()> {
-        let mut body: Vec<Token<'a>> = Vec::new();
+        let mut body: Vec<Opcode> = Vec::new();
         let mut name: &str = "";
+
+        println!("{:#?}", self.tokens);
 
         self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Macro)?;
         self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Identifier)?;
@@ -43,15 +45,90 @@ impl<'a> Assembler<'a> {
         self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::OpenBrace)?;
 
         while self.tokens[self.cursor.get()].ttype != TokenType::CloseBrace {
-            body.push(self.tokens[self.cursor.get()]);
-            let mut curr = self.cursor.get();
-            curr += 1;
-            self.cursor.set(curr);
+            body.push(self.parse_opcode()?);
         }
 
         self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CloseBrace)?;
 
         Ok(Macro { name, body })
+    }
+
+    fn parse_opcode(&self) -> Result<Opcode<'a>, ()> {
+        let current_token = self.tokens[self.cursor.get()];
+
+        match current_token.ttype {
+            TokenType::Unknown => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Unknown);
+                Ok(Opcode::Unknown)
+            }
+            TokenType::Allocate => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Allocate);
+                Ok(Opcode::Allocate)
+            }
+            TokenType::Deallocate => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Deallocate);
+                Ok(Opcode::Deallocate)
+            }
+            TokenType::Claim => {
+                let fee0;
+                let fee1;
+                let poolId;
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Claim)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                poolId = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Fee0)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                fee0 = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Fee1)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                fee1 = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                Ok(Opcode::Claim { poolId, fee0, fee1 })
+            }
+            TokenType::Swap => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Swap);
+                Ok(Opcode::Swap)
+            }
+            TokenType::CreatePool => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CreatePool);
+                Ok(Opcode::CreatePool)
+            }
+            TokenType::CreatePair => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CreatePair);
+                Ok(Opcode::CreatePair)
+            }
+            TokenType::Jump => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Jump);
+                Ok(Opcode::Jump)
+            }
+            TokenType::Identifier => {
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Identifier);
+                Ok(Opcode::Identifier {
+                    slice: current_token.slice,
+                })
+            }
+            _ => panic!("something went wrong"),
+        }
     }
 
     fn match_token(&self, actual: TokenType, expected: TokenType) -> Result<(), ()> {
@@ -63,28 +140,5 @@ impl<'a> Assembler<'a> {
         } else {
             Err(())
         }
-    }
-
-    /// Parse tokens to Opcodes.
-    pub fn assemble(&self) -> Vec<Opcode> {
-        let mut opcodes = Vec::new();
-        for (index, token) in self.tokens.iter().enumerate() {
-            match token.ttype {
-                TokenType::Unknown => opcodes.push(Opcode::Unknown),
-                TokenType::Allocate => opcodes.push(Opcode::Allocate),
-                TokenType::Deallocate => opcodes.push(Opcode::Deallocate),
-                TokenType::Claim => opcodes.push(Opcode::Claim),
-                TokenType::Swap => opcodes.push(Opcode::Swap),
-                TokenType::CreatePool => opcodes.push(Opcode::CreatePool),
-                TokenType::CreatePair => opcodes.push(Opcode::CreatePair),
-                TokenType::Jump => opcodes.push(Opcode::Jump),
-
-                TokenType::Identifier => continue,
-                TokenType::Error => continue,
-
-                _ => panic!("test"),
-            }
-        }
-        opcodes
     }
 }

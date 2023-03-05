@@ -4,6 +4,7 @@ use clap::{Parser, Subcommand};
 use colored::*;
 use compiler::{
     assembler::{Assembler, Macro},
+    opcode::Opcode,
     token::{Token, TokenType},
 };
 
@@ -44,6 +45,7 @@ fn main() {
 
             for _ in 0..occurences {
                 let mac = opcodes.parse_macro().unwrap();
+                println!("{:#?}", mac);
 
                 if macros.get(&mac.name).is_some() {
                     println!(
@@ -65,21 +67,24 @@ fn main() {
             }
 
             for (i, n) in main_macro.clone().body.iter().enumerate() {
-                if n.ttype == TokenType::Identifier {
-                    let replacer = macros.get(&n.slice);
-                    let mut index: usize = i;
+                match n {
+                    Opcode::Identifier { slice } => {
+                        let replacer = macros.get(slice);
+                        let mut index: usize = i;
 
-                    for g in &replacer.unwrap().body {
-                        main_macro.body.insert(index, *g);
-                        index += 1;
+                        for g in &replacer.unwrap().body {
+                            main_macro.body.insert(index, g.clone());
+                            index += 1;
+                        }
                     }
+                    _ => continue,
                 }
             }
 
             println!("{} `{}`", "Compiling".green().bold(), path);
 
             let now = Instant::now();
-            let opcodes = Assembler::new(main_macro.body).assemble();
+            let opcodes = main_macro.body;
 
             println!("Opcodes: {opcodes:#?}");
         }

@@ -1,0 +1,12 @@
+macro main {
+	test
+}
+
+macro test {
+	claim:
+		poolId: 0 
+		fee0: 2 
+		fee1: 01
+
+	allocate
+}
