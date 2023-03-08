@@ -1,3 +1,5 @@
+use ethers::types::H160;
+
 #[derive(Debug, Clone)]
 pub enum Opcode<'a> {
     /// This is the default opcode. It is used to represent an unknown opcode,
@@ -21,7 +23,10 @@ pub enum Opcode<'a> {
     },
 
     /// This instruction is used to initialize a new pair of assets for which pools can be created.    
-    CreatePair,
+    CreatePair {
+        token0: H160,
+        token1: H160
+    },
 
     /// This instruction is used to create a new pool.
     /// Initially, pools are not deployed with any capital, but are deployed with parameters for the CFMM as well as an initial price.    

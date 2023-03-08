@@ -70,6 +70,9 @@ pub enum TokenType {
     #[token("sellAsset")]
     SellAsset,
 
+    #[regex(r"0[xX][a-fA-F0-9]+")]
+    AddressLiteral,
+
     #[regex("[a-zA-Z_]+")]
     Identifier,
 

@@ -1,5 +1,7 @@
 use std::{cell::Cell, collections::HashMap};
 
+use ethers::types::H160;
+
 use crate::{
     opcode::Opcode,
     token::{Token, TokenType},
@@ -167,6 +169,7 @@ impl<'a> Assembler<'a> {
             }
             TokenType::Swap => {
                 self.match_token(TokenType::Swap)?;
+                self.match_token(TokenType::Colon)?;
 
                 self.match_token(TokenType::UseMax)?;
                 self.match_token(TokenType::Colon)?;
@@ -222,8 +225,28 @@ impl<'a> Assembler<'a> {
                 })
             }
             TokenType::CreatePool => {
-                self.match_token(TokenType::CreatePool);
-                Ok(Opcode::CreatePool)
+                self.match_token(TokenType::CreatePool)?;
+                self.match_token(TokenType::Colon)?;
+
+                self.match_token(TokenType::Token0)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::AddressLiteral)?;
+
+                let token0 = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<Address>()
+                    .unwrap();
+
+                self.match_token(TokenType::Token1)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::AddressLiteral)?;
+    
+                let token1 = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<Address>()
+                    .unwrap();
+
+                Ok(Opcode::CreatePool { token0, token1 })
             }
             TokenType::CreatePair => {
                 self.match_token(TokenType::CreatePair);
