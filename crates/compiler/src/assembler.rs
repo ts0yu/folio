@@ -65,22 +65,46 @@ impl<'a> Assembler<'a> {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Allocate);
                 Ok(Opcode::Allocate)
             }
-            TokenType::Deallocate => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Deallocate);
-                Ok(Opcode::Deallocate)
+            TokenType::Deallocate => {			
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Deallocate)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+				let useMax = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;		
+
+				let poolId = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::DeltaLiquidity)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+				let deltaLiquidity = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+				
+                Ok(Opcode::Deallocate { useMax, poolId, deltaLiquidity })
             }
             TokenType::Claim => {
-                let fee0;
-                let fee1;
-                let poolId;
-
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Claim)?;
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-                poolId = self.tokens[self.cursor.get() - 1]
+                let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
@@ -89,7 +113,7 @@ impl<'a> Assembler<'a> {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-                fee0 = self.tokens[self.cursor.get() - 1]
+                let fee0 = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
@@ -98,7 +122,7 @@ impl<'a> Assembler<'a> {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-                fee1 = self.tokens[self.cursor.get() - 1]
+                let fee1 = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();

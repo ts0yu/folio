@@ -49,6 +49,12 @@ pub enum TokenType {
     #[token("fee1")]
     Fee1,
 
+	#[token("useMax")]
+    UseMax,
+
+    #[token("deltaLiquidity")]
+    DeltaLiquidity,
+
     #[regex("[a-zA-Z_]+")]
     Identifier,
 

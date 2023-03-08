@@ -10,7 +10,11 @@ pub enum Opcode<'a> {
 
     /// This instruction is used to remove liquidity from a pool.
     /// It maintains invariant pricing for each pool that is interacted with.
-    Deallocate,
+    Deallocate {
+		useMax: usize,
+		poolId: usize,
+		deltaLiquidity: usize,
+	},
 
     /// This instruction is used to initialize a new pair of assets for which pools can be created.    
     CreatePair,

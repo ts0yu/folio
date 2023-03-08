@@ -8,5 +8,10 @@ macro test {
 		fee0: 2 
 		fee1: 01
 
+	deallocate:
+		useMax: 0
+		poolId: 10
+		deltaLiquidity: 10
+
 	allocate
 }
