@@ -39,16 +39,16 @@ impl<'a> Assembler<'a> {
 
         println!("{:#?}", self.tokens);
 
-        self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Macro)?;
-        self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Identifier)?;
+        self.match_token(TokenType::Macro)?;
+        self.match_token(TokenType::Identifier)?;
         name = self.tokens[self.cursor.get() - 1].slice;
-        self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::OpenBrace)?;
+        self.match_token(TokenType::OpenBrace)?;
 
         while self.tokens[self.cursor.get()].ttype != TokenType::CloseBrace {
             body.push(self.parse_opcode()?);
         }
 
-        self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CloseBrace)?;
+        self.match_token(TokenType::CloseBrace)?;
 
         Ok(Macro { name, body })
     }
@@ -58,24 +58,24 @@ impl<'a> Assembler<'a> {
 
         match current_token.ttype {
             TokenType::Unknown => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Unknown);
+                self.match_token(TokenType::Unknown);
                 Ok(Opcode::Unknown)
             }
             TokenType::Allocate => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Allocate)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Allocate)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::UseMax)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let useMax = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::PoolId)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
@@ -83,11 +83,10 @@ impl<'a> Assembler<'a> {
                     .unwrap();
 
                 self.match_token(
-                    self.tokens[self.cursor.get()].ttype,
                     TokenType::DeltaLiquidity,
                 )?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let deltaLiquidity = self.tokens[self.cursor.get() - 1]
                     .slice
@@ -101,20 +100,20 @@ impl<'a> Assembler<'a> {
                 })
             }
             TokenType::Deallocate => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Deallocate)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Deallocate)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::UseMax)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let useMax = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::PoolId)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
@@ -122,11 +121,10 @@ impl<'a> Assembler<'a> {
                     .unwrap();
 
                 self.match_token(
-                    self.tokens[self.cursor.get()].ttype,
                     TokenType::DeltaLiquidity,
                 )?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let deltaLiquidity = self.tokens[self.cursor.get() - 1]
                     .slice
@@ -140,29 +138,29 @@ impl<'a> Assembler<'a> {
                 })
             }
             TokenType::Claim => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Claim)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Claim)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::PoolId)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Fee0)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Fee0)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let fee0 = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Fee1)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Fee1)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let fee1 = self.tokens[self.cursor.get() - 1]
                     .slice
@@ -172,47 +170,47 @@ impl<'a> Assembler<'a> {
                 Ok(Opcode::Claim { poolId, fee0, fee1 })
             }
             TokenType::Swap => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Swap)?;
+                self.match_token(TokenType::Swap)?;
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::UseMax)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let useMax = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::PoolId)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Amount0)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Amount0)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let amount0 = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Amount1)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::Amount1)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let amount1 = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::SellAsset)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(TokenType::SellAsset)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
 
                 let sellAsset = self.tokens[self.cursor.get() - 1]
                     .slice
@@ -228,19 +226,19 @@ impl<'a> Assembler<'a> {
                 })
             }
             TokenType::CreatePool => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CreatePool);
+                self.match_token(TokenType::CreatePool);
                 Ok(Opcode::CreatePool)
             }
             TokenType::CreatePair => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CreatePair);
+                self.match_token(TokenType::CreatePair);
                 Ok(Opcode::CreatePair)
             }
             TokenType::Jump => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Jump);
+                self.match_token(TokenType::Jump);
                 Ok(Opcode::Jump)
             }
             TokenType::Identifier => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Identifier);
+                self.match_token(TokenType::Identifier);
                 Ok(Opcode::Identifier {
                     slice: current_token.slice,
                 })
@@ -249,8 +247,8 @@ impl<'a> Assembler<'a> {
         }
     }
 
-    fn match_token(&self, actual: TokenType, expected: TokenType) -> Result<(), ()> {
-        if actual == expected {
+	fn match_token(&self, expected: TokenType) -> Result<(), ()> {
+        if self.tokens[self.cursor.get()].ttype == expected {
             let mut curr = self.cursor.get();
             curr += 1;
             self.cursor.set(curr);
