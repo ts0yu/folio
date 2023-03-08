@@ -13,5 +13,8 @@ macro test {
 		poolId: 10
 		deltaLiquidity: 10
 
-	allocate
+	allocate:
+		useMax: 1
+		poolId: 10
+		deltaLiquidity: 100
 }

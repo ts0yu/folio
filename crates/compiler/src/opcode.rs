@@ -6,7 +6,11 @@ pub enum Opcode<'a> {
 
     /// This instruction is used to add liquidity to a pool.
     /// It maintains invariant pricing for each pool that is interacted with.    
-    Allocate,
+    Allocate {
+		useMax: usize,
+		poolId: usize,
+		deltaLiquidity: usize,
+	},
 
     /// This instruction is used to remove liquidity from a pool.
     /// It maintains invariant pricing for each pool that is interacted with.
