@@ -63,67 +63,81 @@ impl<'a> Assembler<'a> {
             }
             TokenType::Allocate => {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Allocate)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-				let useMax = self.tokens[self.cursor.get() - 1]
+                let useMax = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;		
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-				let poolId = self.tokens[self.cursor.get() - 1]
+                let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::DeltaLiquidity)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(
+                    self.tokens[self.cursor.get()].ttype,
+                    TokenType::DeltaLiquidity,
+                )?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-				let deltaLiquidity = self.tokens[self.cursor.get() - 1]
+                let deltaLiquidity = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
-				
-                Ok(Opcode::Allocate { useMax, poolId, deltaLiquidity })
+
+                Ok(Opcode::Allocate {
+                    useMax,
+                    poolId,
+                    deltaLiquidity,
+                })
             }
-            TokenType::Deallocate => {			
+            TokenType::Deallocate => {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Deallocate)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-				let useMax = self.tokens[self.cursor.get() - 1]
+                let useMax = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;		
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-				let poolId = self.tokens[self.cursor.get() - 1]
+                let poolId = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
 
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::DeltaLiquidity)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
-				self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+                self.match_token(
+                    self.tokens[self.cursor.get()].ttype,
+                    TokenType::DeltaLiquidity,
+                )?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
 
-				let deltaLiquidity = self.tokens[self.cursor.get() - 1]
+                let deltaLiquidity = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<usize>()
                     .unwrap();
-				
-                Ok(Opcode::Deallocate { useMax, poolId, deltaLiquidity })
+
+                Ok(Opcode::Deallocate {
+                    useMax,
+                    poolId,
+                    deltaLiquidity,
+                })
             }
             TokenType::Claim => {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Claim)?;
@@ -158,8 +172,60 @@ impl<'a> Assembler<'a> {
                 Ok(Opcode::Claim { poolId, fee0, fee1 })
             }
             TokenType::Swap => {
-                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Swap);
-                Ok(Opcode::Swap)
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Swap)?;
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::UseMax)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                let useMax = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::PoolId)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                let poolId = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Amount0)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                let amount0 = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Amount1)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                let amount1 = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::SellAsset)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Colon)?;
+                self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::Literal)?;
+
+                let sellAsset = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                Ok(Opcode::Swap {
+                    useMax,
+                    poolId,
+                    amount0,
+                    amount1,
+                    sellAsset,
+                })
             }
             TokenType::CreatePool => {
                 self.match_token(self.tokens[self.cursor.get()].ttype, TokenType::CreatePool);

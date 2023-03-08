@@ -7,18 +7,18 @@ pub enum Opcode<'a> {
     /// This instruction is used to add liquidity to a pool.
     /// It maintains invariant pricing for each pool that is interacted with.    
     Allocate {
-		useMax: usize,
-		poolId: usize,
-		deltaLiquidity: usize,
-	},
+        useMax: usize,
+        poolId: usize,
+        deltaLiquidity: usize,
+    },
 
     /// This instruction is used to remove liquidity from a pool.
     /// It maintains invariant pricing for each pool that is interacted with.
     Deallocate {
-		useMax: usize,
-		poolId: usize,
-		deltaLiquidity: usize,
-	},
+        useMax: usize,
+        poolId: usize,
+        deltaLiquidity: usize,
+    },
 
     /// This instruction is used to initialize a new pair of assets for which pools can be created.    
     CreatePair,
@@ -29,7 +29,13 @@ pub enum Opcode<'a> {
 
     /// This instruction is used to swap between the tokens.
     /// It maintains the invariant of the trading curve.    
-    Swap,
+    Swap {
+        useMax: usize,
+        poolId: usize,
+        amount0: usize,
+        amount1: usize,
+        sellAsset: usize,
+    },
 
     /// Collects all the fees generated from a positive invariant for.
     Claim {
