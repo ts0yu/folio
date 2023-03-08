@@ -61,7 +61,7 @@ pub enum TokenType {
     #[token("amount1")]
     Amount1,
 
-	#[token("token0")]
+    #[token("token0")]
     Token0,
 
     #[token("token1")]

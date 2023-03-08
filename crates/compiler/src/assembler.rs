@@ -82,9 +82,7 @@ impl<'a> Assembler<'a> {
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(
-                    TokenType::DeltaLiquidity,
-                )?;
+                self.match_token(TokenType::DeltaLiquidity)?;
                 self.match_token(TokenType::Colon)?;
                 self.match_token(TokenType::Literal)?;
 
@@ -120,9 +118,7 @@ impl<'a> Assembler<'a> {
                     .parse::<usize>()
                     .unwrap();
 
-                self.match_token(
-                    TokenType::DeltaLiquidity,
-                )?;
+                self.match_token(TokenType::DeltaLiquidity)?;
                 self.match_token(TokenType::Colon)?;
                 self.match_token(TokenType::Literal)?;
 
@@ -247,7 +243,7 @@ impl<'a> Assembler<'a> {
         }
     }
 
-	fn match_token(&self, expected: TokenType) -> Result<(), ()> {
+    fn match_token(&self, expected: TokenType) -> Result<(), ()> {
         if self.tokens[self.cursor.get()].ttype == expected {
             let mut curr = self.cursor.get();
             curr += 1;
