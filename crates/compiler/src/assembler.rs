@@ -178,7 +178,7 @@ impl<'a> Assembler<'a> {
                 self.match_parameter(TokenType::Price, TokenType::Literal);                               
                 let price = self.previous_literal();
 
-                Ok(Opcode::CreatePool)
+                Ok(Opcode::CreatePool { pairId, controller, priority_fee, fee, vol, dur, jit, max_price, price })
             }
             TokenType::CreatePair => {
                 self.match_token(TokenType::CreatePair);
