@@ -16,13 +16,19 @@ pub struct Assembler<'a> {
     pub cursor: Cell<usize>,
 }
 
+#[derive(Clone, Debug)]
+pub enum Expression<'a> {
+    Opcode(Opcode),
+    Invocation(&'a str),
+}
+
 /// Represents a macro, a reusable building block of opcodes.
 #[derive(Debug, Clone)]
 pub struct Macro<'a> {
     /// Macro name.
     pub name: &'a str,
     /// Body of the macro: the opcodes inside of it.
-    pub body: Vec<Opcode<'a>>,
+    pub body: Vec<Expression<'a>>,
 }
 
 impl<'a> Assembler<'a> {
@@ -36,7 +42,7 @@ impl<'a> Assembler<'a> {
 
     /// Expand all macros.
     pub fn parse_macro(&self) -> Result<Macro<'a>, ()> {
-        let mut body: Vec<Opcode> = Vec::new();
+        let mut body: Vec<Expression> = Vec::new();
         let mut name: &str = "";
 
         println!("{:#?}", self.tokens);
@@ -47,7 +53,7 @@ impl<'a> Assembler<'a> {
         self.match_token(TokenType::OpenBrace)?;
 
         while self.tokens[self.cursor.get()].ttype != TokenType::CloseBrace {
-            body.push(self.parse_opcode()?);
+            body.push(self.parse_expression()?);
         }
 
         self.match_token(TokenType::CloseBrace)?;
@@ -55,35 +61,33 @@ impl<'a> Assembler<'a> {
         Ok(Macro { name, body })
     }
 
-    fn parse_opcode(&self) -> Result<Opcode<'a>, ()> {
+    fn parse_expression(&self) -> Result<Expression<'a>, ()> {
         let current_token = self.tokens[self.cursor.get()];
 
         match current_token.ttype {
             TokenType::Unknown => {
                 self.match_token(TokenType::Unknown);
-                Ok(Opcode::Unknown)
+                Ok(Expression::Opcode(Opcode::Unknown))
             }
-            TokenType::Allocate => self.allocate(),
-            TokenType::Deallocate => self.deallocate(),
-            TokenType::Claim => self.claim(),
-            TokenType::Swap => self.swap(),
-            TokenType::CreatePool => self.create_pool(),
-            TokenType::CreatePair => self.create_pair(),
+            TokenType::Allocate => Ok(Expression::Opcode(self.allocate()?)),
+            TokenType::Deallocate => Ok(Expression::Opcode(self.deallocate()?)),
+            TokenType::Claim => Ok(Expression::Opcode(self.claim()?)),
+            TokenType::Swap => Ok(Expression::Opcode(self.swap()?)),
+            TokenType::CreatePool => Ok(Expression::Opcode(self.create_pool()?)),
+            TokenType::CreatePair => Ok(Expression::Opcode(self.create_pair()?)),
             TokenType::Jump => {
                 self.match_token(TokenType::Jump);
-                Ok(Opcode::Jump)
+                Ok(Expression::Opcode(Opcode::Jump))
             }
             TokenType::Identifier => {
                 self.match_token(TokenType::Identifier);
-                Ok(Opcode::Identifier {
-                    slice: current_token.slice,
-                })
+                Ok(Expression::Invocation(current_token.slice))
             }
             _ => panic!("something went wrong"),
         }
     }
 
-    fn create_pair(&self) -> Result<Opcode<'a>, ()> {
+    fn create_pair(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::CreatePair);
         self.match_token(TokenType::Colon)?;
 
@@ -104,7 +108,7 @@ impl<'a> Assembler<'a> {
         Ok(Opcode::CreatePair { token0, token1 })
     }
 
-    fn create_pool(&self) -> Result<Opcode<'a>, ()> {
+    fn create_pool(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::CreatePool);
         self.match_token(TokenType::Colon)?;
 
@@ -152,7 +156,7 @@ impl<'a> Assembler<'a> {
         })
     }
 
-    fn swap(&self) -> Result<Opcode<'a>, ()> {
+    fn swap(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::Swap)?;
         self.match_token(TokenType::Colon)?;
 
@@ -180,7 +184,7 @@ impl<'a> Assembler<'a> {
         })
     }
 
-    fn claim(&self) -> Result<Opcode<'a>, ()> {
+    fn claim(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::Claim)?;
         self.match_token(TokenType::Colon)?;
 
@@ -196,7 +200,7 @@ impl<'a> Assembler<'a> {
         Ok(Opcode::Claim { poolId, fee0, fee1 })
     }
 
-    fn deallocate(&self) -> Result<Opcode<'a>, ()> {
+    fn deallocate(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::Deallocate)?;
         self.match_token(TokenType::Colon)?;
 
@@ -216,7 +220,7 @@ impl<'a> Assembler<'a> {
         })
     }
 
-    fn allocate(&self) -> Result<Opcode<'a>, ()> {
+    fn allocate(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::Allocate)?;
         self.match_token(TokenType::Colon)?;
 

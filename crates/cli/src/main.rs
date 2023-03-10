@@ -3,7 +3,7 @@ use std::{collections::HashMap, fs, time::Instant};
 use clap::{Parser, Subcommand};
 use colored::*;
 use compiler::{
-    assembler::{Assembler, Macro},
+    assembler::{Assembler, Expression, Macro},
     opcode::Opcode,
     token::{Token, TokenType},
 };
@@ -68,7 +68,7 @@ fn main() {
 
             for (i, n) in main_macro.clone().body.iter().enumerate() {
                 match n {
-                    Opcode::Identifier { slice } => {
+                    Expression::Invocation(slice) => {
                         let replacer = macros.get(slice);
                         let mut index: usize = i;
 

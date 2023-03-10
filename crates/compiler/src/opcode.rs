@@ -1,7 +1,7 @@
 use ethers::types::H160;
 
 #[derive(Debug, Clone)]
-pub enum Opcode<'a> {
+pub enum Opcode {
     /// This is the default opcode. It is used to represent an unknown opcode,
     /// and is used to initialize the FVM’s state.
     Unknown,
@@ -58,7 +58,4 @@ pub enum Opcode<'a> {
 
     /// This instructions is used to jump to a different instruction in the FVM’s state via FVM’s pointer.
     Jump,
-
-    /// Identifier / macro call.
-    Identifier { slice: &'a str },
 }

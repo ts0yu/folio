@@ -1,5 +1,4 @@
 macro main {
-	0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
 	test
 }
 
@@ -18,4 +17,8 @@ macro test {
 		useMax: 1
 		poolId: 10
 		deltaLiquidity: 100
+
+	create_pair:
+		token0: 0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
+		token1: 0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
 }
