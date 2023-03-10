@@ -30,7 +30,17 @@ pub enum Opcode<'a> {
 
     /// This instruction is used to create a new pool.
     /// Initially, pools are not deployed with any capital, but are deployed with parameters for the CFMM as well as an initial price.    
-    CreatePool,
+    CreatePool {
+        pairId: usize,
+        controller: H160,
+        priorityFee: usize,
+        fee: usize,
+        vol: usize,
+        dur: usize,
+        jit: usize,
+        maxPrice: usize,
+        price: usize
+    },
 
     /// This instruction is used to swap between the tokens.
     /// It maintains the invariant of the trading curve.    

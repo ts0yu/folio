@@ -67,6 +67,33 @@ pub enum TokenType {
     #[token("token1")]
     Token1,
 
+    #[token("pairId")]
+    PairId,
+
+    #[token("controller")]
+    Controller,
+
+    #[token("priorityFee")]
+    PriorityFee,
+
+    #[token("fee")]
+    Fee,
+
+    #[token("vol")]
+    Vol,
+
+    #[token("dur")]
+    Dur,
+
+    #[token("jit")]
+    Jit,
+
+    #[token("maxPrice")]
+    MaxPrice,
+
+    #[token("price")]
+    Price,
+
     #[token("sellAsset")]
     SellAsset,
 

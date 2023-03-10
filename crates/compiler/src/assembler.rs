@@ -360,4 +360,17 @@ impl<'a> Assembler<'a> {
             Err(())
         }
     }
+
+    fn match_token_seq(&self, expected: Vec<TokenType>) -> Result<(), ()> {
+        for i in expected {
+            if self.tokens[self.cursor.get()].ttype == i {
+                let mut curr = self.cursor.get();
+                curr += 1;
+                self.cursor.set(curr);
+                Ok(())
+            } else {
+                Err(())
+            }
+        }
+    }
 }
