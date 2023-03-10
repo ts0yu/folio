@@ -226,6 +226,90 @@ impl<'a> Assembler<'a> {
             }
             TokenType::CreatePool => {
                 self.match_token(TokenType::CreatePool);
+                self.match_token(TokenType::Colon)?;
+
+                self.match_token(TokenType::PairId)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+
+                let pair_id = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::Controller)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::AddressLiteral)?;
+    
+                let controller = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<Address>()
+                    .unwrap();
+
+                self.match_token(TokenType::PriorityFee)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+        
+                let priority_fee = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::Fee)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+            
+                let fee = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::Vol)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+                
+                let vol = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::Dur)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+                    
+                let dur = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::Jit)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+                        
+                let jit = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::MaxPrice)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+                            
+                let max_price = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+                self.match_token(TokenType::Price)?;
+                self.match_token(TokenType::Colon)?;
+                self.match_token(TokenType::Literal)?;
+                                
+                let price = self.tokens[self.cursor.get() - 1]
+                    .slice
+                    .parse::<usize>()
+                    .unwrap();
+
+
                 Ok(Opcode::CreatePool)
             }
             TokenType::CreatePair => {
