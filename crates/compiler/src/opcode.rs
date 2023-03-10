@@ -23,10 +23,7 @@ pub enum Opcode<'a> {
     },
 
     /// This instruction is used to initialize a new pair of assets for which pools can be created.    
-    CreatePair {
-        token0: H160,
-        token1: H160
-    },
+    CreatePair { token0: H160, token1: H160 },
 
     /// This instruction is used to create a new pool.
     /// Initially, pools are not deployed with any capital, but are deployed with parameters for the CFMM as well as an initial price.    
@@ -39,7 +36,7 @@ pub enum Opcode<'a> {
         dur: usize,
         jit: usize,
         maxPrice: usize,
-        price: usize
+        price: usize,
     },
 
     /// This instruction is used to swap between the tokens.

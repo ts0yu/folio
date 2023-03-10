@@ -1,6 +1,6 @@
 use std::{cell::Cell, collections::HashMap};
 
-use ethers::types::{H160, Address};
+use ethers::types::{Address, H160};
 
 use crate::{
     opcode::Opcode,
@@ -151,34 +151,44 @@ impl<'a> Assembler<'a> {
                 let pair_id = self.previous_literal();
 
                 self.match_parameter(TokenType::Controller, TokenType::AddressLiteral);
-    
+
                 let controller = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<Address>()
                     .unwrap();
 
-                self.match_parameter(TokenType::PriorityFee, TokenType::Literal);        
+                self.match_parameter(TokenType::PriorityFee, TokenType::Literal);
                 let priority_fee = self.previous_literal();
 
-                self.match_parameter(TokenType::Fee, TokenType::Literal);            
+                self.match_parameter(TokenType::Fee, TokenType::Literal);
                 let fee = self.previous_literal();
 
-                self.match_parameter(TokenType::Vol, TokenType::Literal);               
+                self.match_parameter(TokenType::Vol, TokenType::Literal);
                 let vol = self.previous_literal();
 
-                self.match_parameter(TokenType::Dur, TokenType::Literal);                   
+                self.match_parameter(TokenType::Dur, TokenType::Literal);
                 let dur = self.previous_literal();
 
                 self.match_parameter(TokenType::Jit, TokenType::Literal);
                 let jit = self.previous_literal();
 
-                self.match_parameter(TokenType::MaxPrice, TokenType::Literal);                            
+                self.match_parameter(TokenType::MaxPrice, TokenType::Literal);
                 let max_price = self.previous_literal();
 
-                self.match_parameter(TokenType::Price, TokenType::Literal);                               
+                self.match_parameter(TokenType::Price, TokenType::Literal);
                 let price = self.previous_literal();
 
-                Ok(Opcode::CreatePool { pairId, controller, priority_fee, fee, vol, dur, jit, max_price, price })
+                Ok(Opcode::CreatePool {
+                    pairId,
+                    controller,
+                    priority_fee,
+                    fee,
+                    vol,
+                    dur,
+                    jit,
+                    max_price,
+                    price,
+                })
             }
             TokenType::CreatePair => {
                 self.match_token(TokenType::CreatePair);
@@ -192,7 +202,7 @@ impl<'a> Assembler<'a> {
                     .unwrap();
 
                 self.match_parameter(TokenType::Token1, TokenType::AddressLiteral);
-    
+
                 let token1 = self.tokens[self.cursor.get() - 1]
                     .slice
                     .parse::<Address>()
