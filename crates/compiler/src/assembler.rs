@@ -63,153 +63,12 @@ impl<'a> Assembler<'a> {
                 self.match_token(TokenType::Unknown);
                 Ok(Opcode::Unknown)
             }
-            TokenType::Allocate => {
-                self.match_token(TokenType::Allocate)?;
-                self.match_token(TokenType::Colon)?;
-
-                self.parse_parameter(TokenType::UseMax, TokenType::Literal);
-                let useMax = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-                let poolId = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal);
-                let deltaLiquidity = self.previous_literal()?;
-
-                Ok(Opcode::Allocate {
-                    useMax,
-                    poolId,
-                    deltaLiquidity,
-                })
-            }
-            TokenType::Deallocate => {
-                self.match_token(TokenType::Deallocate)?;
-                self.match_token(TokenType::Colon)?;
-
-                self.parse_parameter(TokenType::UseMax, TokenType::Literal);
-                let useMax = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-                let poolId = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal);
-                let deltaLiquidity = self.previous_literal()?;
-
-                Ok(Opcode::Deallocate {
-                    useMax,
-                    poolId,
-                    deltaLiquidity,
-                })
-            }
-            TokenType::Claim => {
-                self.match_token(TokenType::Claim)?;
-                self.match_token(TokenType::Colon)?;
-
-                self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-                let poolId = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Fee0, TokenType::Literal);
-                let fee0 = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Fee1, TokenType::Literal);
-                let fee1 = self.previous_literal()?;
-
-                Ok(Opcode::Claim { poolId, fee0, fee1 })
-            }
-            TokenType::Swap => {
-                self.match_token(TokenType::Swap)?;
-                self.match_token(TokenType::Colon)?;
-
-                self.parse_parameter(TokenType::UseMax, TokenType::Literal);
-                let useMax = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-                let poolId = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Amount0, TokenType::Literal);
-                let amount0 = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Amount1, TokenType::Literal);
-                let amount1 = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::SellAsset, TokenType::Literal);
-                let sellAsset = self.previous_literal()?;
-
-                Ok(Opcode::Swap {
-                    useMax,
-                    poolId,
-                    amount0,
-                    amount1,
-                    sellAsset,
-                })
-            }
-            TokenType::CreatePool => {
-                self.match_token(TokenType::CreatePool);
-                self.match_token(TokenType::Colon)?;
-
-                self.parse_parameter(TokenType::PairId, TokenType::Literal);
-                let pairId = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Controller, TokenType::AddressLiteral);
-
-                let controller = self.tokens[self.cursor.get() - 1]
-                    .slice
-                    .parse::<Address>()
-                    .unwrap();
-
-                self.parse_parameter(TokenType::PriorityFee, TokenType::Literal);
-                let priorityFee = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Fee, TokenType::Literal);
-                let fee = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Vol, TokenType::Literal);
-                let vol = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Dur, TokenType::Literal);
-                let dur = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Jit, TokenType::Literal);
-                let jit = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::MaxPrice, TokenType::Literal);
-                let maxPrice = self.previous_literal()?;
-
-                self.parse_parameter(TokenType::Price, TokenType::Literal);
-                let price = self.previous_literal()?;
-
-                Ok(Opcode::CreatePool {
-                    pairId,
-                    controller,
-                    priorityFee,
-                    fee,
-                    vol,
-                    dur,
-                    jit,
-                    maxPrice,
-                    price,
-                })
-            }
-            TokenType::CreatePair => {
-                self.match_token(TokenType::CreatePair);
-                self.match_token(TokenType::Colon)?;
-
-                self.parse_parameter(TokenType::Token0, TokenType::AddressLiteral);
-
-                let token0 = self.tokens[self.cursor.get() - 1]
-                    .slice
-                    .parse::<Address>()
-                    .unwrap();
-
-                self.parse_parameter(TokenType::Token1, TokenType::AddressLiteral);
-
-                let token1 = self.tokens[self.cursor.get() - 1]
-                    .slice
-                    .parse::<Address>()
-                    .unwrap();
-
-                Ok(Opcode::CreatePair { token0, token1 })
-            }
+            TokenType::Allocate => self.allocate(),
+            TokenType::Deallocate => self.deallocate(),
+            TokenType::Claim => self.claim(),
+            TokenType::Swap => self.swap(),
+            TokenType::CreatePool => self.create_pool(),
+            TokenType::CreatePair => self.create_pair(),
             TokenType::Jump => {
                 self.match_token(TokenType::Jump);
                 Ok(Opcode::Jump)
@@ -222,6 +81,159 @@ impl<'a> Assembler<'a> {
             }
             _ => panic!("something went wrong"),
         }
+    }
+
+    fn create_pair(&self) -> Result<Opcode<'a>, ()> {
+        self.match_token(TokenType::CreatePair);
+        self.match_token(TokenType::Colon)?;
+
+        self.parse_parameter(TokenType::Token0, TokenType::AddressLiteral);
+
+        let token0 = self.tokens[self.cursor.get() - 1]
+            .slice
+            .parse::<Address>()
+            .unwrap();
+
+        self.parse_parameter(TokenType::Token1, TokenType::AddressLiteral);
+
+        let token1 = self.tokens[self.cursor.get() - 1]
+            .slice
+            .parse::<Address>()
+            .unwrap();
+
+        Ok(Opcode::CreatePair { token0, token1 })
+    }
+
+    fn create_pool(&self) -> Result<Opcode<'a>, ()> {
+        self.match_token(TokenType::CreatePool);
+        self.match_token(TokenType::Colon)?;
+
+        self.parse_parameter(TokenType::PairId, TokenType::Literal);
+        let pairId = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Controller, TokenType::AddressLiteral);
+
+        let controller = self.tokens[self.cursor.get() - 1]
+            .slice
+            .parse::<Address>()
+            .unwrap();
+
+        self.parse_parameter(TokenType::PriorityFee, TokenType::Literal);
+        let priorityFee = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Fee, TokenType::Literal);
+        let fee = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Vol, TokenType::Literal);
+        let vol = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Dur, TokenType::Literal);
+        let dur = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Jit, TokenType::Literal);
+        let jit = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::MaxPrice, TokenType::Literal);
+        let maxPrice = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Price, TokenType::Literal);
+        let price = self.previous_literal()?;
+
+        Ok(Opcode::CreatePool {
+            pairId,
+            controller,
+            priorityFee,
+            fee,
+            vol,
+            dur,
+            jit,
+            maxPrice,
+            price,
+        })
+    }
+
+    fn swap(&self) -> Result<Opcode<'a>, ()> {
+        self.match_token(TokenType::Swap)?;
+        self.match_token(TokenType::Colon)?;
+
+        self.parse_parameter(TokenType::UseMax, TokenType::Literal);
+        let useMax = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
+        let poolId = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Amount0, TokenType::Literal);
+        let amount0 = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Amount1, TokenType::Literal);
+        let amount1 = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::SellAsset, TokenType::Literal);
+        let sellAsset = self.previous_literal()?;
+
+        Ok(Opcode::Swap {
+            useMax,
+            poolId,
+            amount0,
+            amount1,
+            sellAsset,
+        })
+    }
+
+    fn claim(&self) -> Result<Opcode<'a>, ()> {
+        self.match_token(TokenType::Claim)?;
+        self.match_token(TokenType::Colon)?;
+
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
+        let poolId = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Fee0, TokenType::Literal);
+        let fee0 = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::Fee1, TokenType::Literal);
+        let fee1 = self.previous_literal()?;
+
+        Ok(Opcode::Claim { poolId, fee0, fee1 })
+    }
+
+    fn deallocate(&self) -> Result<Opcode<'a>, ()> {
+        self.match_token(TokenType::Deallocate)?;
+        self.match_token(TokenType::Colon)?;
+
+        self.parse_parameter(TokenType::UseMax, TokenType::Literal);
+        let useMax = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
+        let poolId = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal);
+        let deltaLiquidity = self.previous_literal()?;
+
+        Ok(Opcode::Deallocate {
+            useMax,
+            poolId,
+            deltaLiquidity,
+        })
+    }
+
+    fn allocate(&self) -> Result<Opcode<'a>, ()> {
+        self.match_token(TokenType::Allocate)?;
+        self.match_token(TokenType::Colon)?;
+
+        self.parse_parameter(TokenType::UseMax, TokenType::Literal);
+        let useMax = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
+        let poolId = self.previous_literal()?;
+
+        self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal);
+        let deltaLiquidity = self.previous_literal()?;
+
+        Ok(Opcode::Allocate {
+            useMax,
+            poolId,
+            deltaLiquidity,
+        })
     }
 
     fn match_token(&self, expected: TokenType) -> Result<(), ()> {
