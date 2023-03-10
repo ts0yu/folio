@@ -1,6 +1,6 @@
 use std::{cell::Cell, collections::HashMap};
 
-use ethers::types::H160;
+use ethers::types::{H160, Address};
 
 use crate::{
     opcode::Opcode,
@@ -225,7 +225,11 @@ impl<'a> Assembler<'a> {
                 })
             }
             TokenType::CreatePool => {
-                self.match_token(TokenType::CreatePool)?;
+                self.match_token(TokenType::CreatePool);
+                Ok(Opcode::CreatePool)
+            }
+            TokenType::CreatePair => {
+                self.match_token(TokenType::CreatePair);
                 self.match_token(TokenType::Colon)?;
 
                 self.match_token(TokenType::Token0)?;
@@ -246,11 +250,7 @@ impl<'a> Assembler<'a> {
                     .parse::<Address>()
                     .unwrap();
 
-                Ok(Opcode::CreatePool { token0, token1 })
-            }
-            TokenType::CreatePair => {
-                self.match_token(TokenType::CreatePair);
-                Ok(Opcode::CreatePair)
+                Ok(Opcode::CreatePair { token0, token1 })
             }
             TokenType::Jump => {
                 self.match_token(TokenType::Jump);
