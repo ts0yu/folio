@@ -40,8 +40,7 @@ fn main() {
                 }
             });
 
-            let opcodes = Assembler::new(tokens);
-            let mut macros = HashMap::new();
+
 
             for _ in 0..occurences {
                 let mac = opcodes.parse_macro().unwrap();
