@@ -1,12 +1,14 @@
-use bytes::Bytes;
-use crate::assembler::Macro;
-use crate::assembler::Assembler;
-use crate::assembler::Expression;
-use crate::token::Token;
 use std::collections::HashMap;
 
+use bytes::Bytes;
+
+use crate::{
+    assembler::{Assembler, Expression, Macro},
+    token::Token,
+};
+
 pub struct Codegen<'a> {
-    macros: HashMap<&'a str, Macro<'a>>
+    macros: HashMap<&'a str, Macro<'a>>,
 }
 
 impl<'a> Codegen<'a> {
@@ -14,7 +16,7 @@ impl<'a> Codegen<'a> {
     pub fn new(tokens: Vec<Token<'a>>) -> Self {
         let opcodes = Assembler::new(tokens);
         let mut macros = HashMap::new();
-        
+
         loop {
             let curr_macro = opcodes.parse_macro();
 

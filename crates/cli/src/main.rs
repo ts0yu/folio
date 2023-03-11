@@ -45,7 +45,6 @@ fn main() {
 
             for _ in 0..occurences {
                 let mac = opcodes.parse_macro().unwrap();
-                println!("{:#?}", mac);
 
                 if macros.get(&mac.name).is_some() {
                     println!(
@@ -66,18 +65,30 @@ fn main() {
                 None => panic!("no main macro found"),
             }
 
-            for (i, n) in main_macro.clone().body.iter().enumerate() {
-                match n {
-                    Expression::Invocation(slice) => {
-                        let replacer = macros.get(slice);
-                        let mut index: usize = i;
+            loop {
+                let mut invocation_found = false;
 
-                        for g in &replacer.unwrap().body {
-                            main_macro.body.insert(index, g.clone());
-                            index += 1;
+                for (i, n) in main_macro.clone().body.iter().enumerate() {
+                    match n {
+                        Expression::Invocation(slice) => {
+                            let replacer = macros.get(slice);
+                            let mut index: usize = i;
+
+                            main_macro.body.remove(i);
+
+                            for g in &replacer.unwrap().body {
+                                main_macro.body.insert(index, g.clone());
+                                index += 1;
+                            }
+
+                            invocation_found = true;
                         }
+                        _ => continue,
                     }
-                    _ => continue,
+                }
+
+                if invocation_found == false {
+                    break;
                 }
             }
 

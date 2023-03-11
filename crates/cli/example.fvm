@@ -1,8 +1,19 @@
-macro main {
-	test
+macro main 
+{
+	foo
 }
 
-macro test {
+macro foo 
+{
+	claim:
+		poolId: 1 
+		fee0: 2 
+		fee1: 003
+	bar
+}
+
+macro bar 
+{
 	claim:
 		poolId: 0 
 		fee0: 2 
