@@ -1,3 +1,6 @@
+use crate::assembler::Macro;
+use std::collections::HashMap;
+
 struct Codegen {
     macros: HashMap<&'a str, Macro>
 }
