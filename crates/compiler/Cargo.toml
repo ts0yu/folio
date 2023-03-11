@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 logos = "0.12.1"
 ethers = "2.0.0"
+bytes = "1.4.0"
