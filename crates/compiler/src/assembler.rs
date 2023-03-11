@@ -16,9 +16,13 @@ pub struct Assembler<'a> {
     pub cursor: Cell<usize>,
 }
 
+/// Represents an expression.
+/// An expression is a node in the AST, parsed inside macros.
 #[derive(Clone, Debug)]
 pub enum Expression<'a> {
+    /// An opcode.
     Opcode(Opcode),
+    /// A macro invocation.
     Invocation(&'a str),
 }
 
@@ -38,6 +42,34 @@ impl<'a> Assembler<'a> {
             tokens,
             cursor: Cell::new(0),
         }
+    }
+
+    fn match_token(&self, expected: TokenType) -> Result<(), ()> {
+        if self.tokens[self.cursor.get()].ttype == expected {
+            let mut curr = self.cursor.get();
+            curr += 1;
+            self.cursor.set(curr);
+            Ok(())
+        } else {
+            Err(())
+        }
+    }
+
+    fn parse_parameter(&self, key: TokenType, value: TokenType) -> Result<(), ()> {
+        self.match_token(key)?;
+        self.match_token(TokenType::Colon)?;
+        self.match_token(value)?;
+
+        Ok(())
+    }
+
+    fn previous_literal(&self) -> Result<usize, ()> {
+        let literal = self.tokens[self.cursor.get() - 1]
+            .slice
+            .parse::<usize>()
+            .unwrap();
+
+        Ok(literal)
     }
 
     /// Expand all macros.
@@ -238,33 +270,5 @@ impl<'a> Assembler<'a> {
             poolId,
             deltaLiquidity,
         })
-    }
-
-    fn match_token(&self, expected: TokenType) -> Result<(), ()> {
-        if self.tokens[self.cursor.get()].ttype == expected {
-            let mut curr = self.cursor.get();
-            curr += 1;
-            self.cursor.set(curr);
-            Ok(())
-        } else {
-            Err(())
-        }
-    }
-
-    fn parse_parameter(&self, key: TokenType, value: TokenType) -> Result<(), ()> {
-        self.match_token(key)?;
-        self.match_token(TokenType::Colon)?;
-        self.match_token(value)?;
-
-        Ok(())
-    }
-
-    fn previous_literal(&self) -> Result<usize, ()> {
-        let literal = self.tokens[self.cursor.get() - 1]
-            .slice
-            .parse::<usize>()
-            .unwrap();
-
-        Ok(literal)
     }
 }
