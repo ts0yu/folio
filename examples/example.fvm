@@ -12,7 +12,7 @@ macro foo
 	bar
 }
 
-macro bar 
+macro bar
 {
 	claim:
 		poolId: 0 
