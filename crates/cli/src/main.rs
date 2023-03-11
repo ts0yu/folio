@@ -67,7 +67,7 @@ fn main() {
 
             loop {
                 let mut invocation_found = false;
-                
+
                 for (i, n) in main_macro.clone().body.iter().enumerate() {
                     match n {
                         Expression::Invocation(slice) => {
