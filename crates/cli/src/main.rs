@@ -1,10 +1,9 @@
-use std::{collections::HashMap, fs, time::Instant};
+use std::{collections::HashMap, fs};
 
 use clap::{Parser, Subcommand};
 use colored::*;
 use compiler::{
     assembler::{Assembler, Expression, Macro},
-    opcode::Opcode,
     token::{Token, TokenType},
 };
 
@@ -27,7 +26,7 @@ fn main() {
         Commands::Build { path } => {
             let contents = fs::read_to_string(path).unwrap();
             let tokens = Token::lex(&contents);
-            let mut main_macro: Macro = Macro {
+            let mut _main_macro: Macro = Macro {
                 name: "",
                 body: Vec::new(),
             };
@@ -61,23 +60,23 @@ fn main() {
             }
 
             match macros.get(&"main") {
-                Some(r#main) => main_macro = r#main.clone(),
+                Some(r#main) => _main_macro = r#main.clone(),
                 None => panic!("no main macro found"),
             }
 
             loop {
                 let mut invocation_found = false;
 
-                for (i, n) in main_macro.clone().body.iter().enumerate() {
+                for (i, n) in _main_macro.clone().body.iter().enumerate() {
                     match n {
                         Expression::Invocation(slice) => {
                             let replacer = macros.get(slice);
                             let mut index: usize = i;
 
-                            main_macro.body.remove(i);
+                            _main_macro.body.remove(i);
 
                             for g in &replacer.unwrap().body {
-                                main_macro.body.insert(index, g.clone());
+                                _main_macro.body.insert(index, g.clone());
                                 index += 1;
                             }
 
@@ -87,15 +86,14 @@ fn main() {
                     }
                 }
 
-                if invocation_found == false {
+                if !invocation_found {
                     break;
                 }
             }
 
             println!("{} `{}`", "Compiling".green().bold(), path);
 
-            let now = Instant::now();
-            let opcodes = main_macro.body;
+            let opcodes = _main_macro.body;
 
             println!("Opcodes: {opcodes:#?}");
         }

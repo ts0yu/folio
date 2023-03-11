@@ -28,12 +28,12 @@ impl<'a> Codegen<'a> {
                         macros.insert(mac.clone().name, mac);
                     }
                 }
-                Err(err) => break,
+                Err(_) => break,
             }
         }
 
         match macros.get(&"main") {
-            Some(r#main) => (),
+            Some(_main) => (),
             None => panic!("no main macro found"),
         }
 

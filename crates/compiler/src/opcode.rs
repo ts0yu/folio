@@ -9,51 +9,51 @@ pub enum Opcode {
     /// This instruction is used to add liquidity to a pool.
     /// It maintains invariant pricing for each pool that is interacted with.    
     Allocate {
-        useMax: usize,
-        poolId: usize,
-        deltaLiquidity: usize,
+        use_max: usize,
+        pool_id: usize,
+        delta_liquidity: usize,
     },
 
     /// This instruction is used to remove liquidity from a pool.
     /// It maintains invariant pricing for each pool that is interacted with.
     Deallocate {
-        useMax: usize,
-        poolId: usize,
-        deltaLiquidity: usize,
+        use_max: usize,
+        pool_id: usize,
+        delta_liquidity: usize,
     },
 
     /// This instruction is used to initialize a new pair of assets for which pools can be created.    
-    CreatePair { token0: H160, token1: H160 },
+    CreatePair { token_0: H160, token_1: H160 },
 
     /// This instruction is used to create a new pool.
     /// Initially, pools are not deployed with any capital, but are deployed with parameters for the CFMM as well as an initial price.    
     CreatePool {
-        pairId: usize,
+        pair_id: usize,
         controller: H160,
-        priorityFee: usize,
+        priority_fee: usize,
         fee: usize,
         vol: usize,
         dur: usize,
         jit: usize,
-        maxPrice: usize,
+        max_price: usize,
         price: usize,
     },
 
     /// This instruction is used to swap between the tokens.
     /// It maintains the invariant of the trading curve.    
     Swap {
-        useMax: usize,
-        poolId: usize,
-        amount0: usize,
-        amount1: usize,
-        sellAsset: usize,
+        use_max: usize,
+        pool_id: usize,
+        amount_0: usize,
+        amount_1: usize,
+        sell_asset: usize,
     },
 
     /// Collects all the fees generated from a positive invariant for.
     Claim {
-        poolId: usize,
-        fee0: usize,
-        fee1: usize,
+        pool_id: usize,
+        fee_0: usize,
+        fee_1: usize,
     },
 
     /// This instructions is used to jump to a different instruction in the FVM’s state via FVM’s pointer.

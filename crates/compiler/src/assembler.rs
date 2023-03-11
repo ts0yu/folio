@@ -1,6 +1,6 @@
-use std::{cell::Cell, collections::HashMap};
+use std::cell::Cell;
 
-use ethers::types::{Address, H160};
+use ethers::types::Address;
 
 use crate::{
     opcode::Opcode,
@@ -98,7 +98,7 @@ impl<'a> Assembler<'a> {
 
         match current_token.ttype {
             TokenType::Unknown => {
-                self.match_token(TokenType::Unknown);
+                self.match_token(TokenType::Unknown)?;
                 Ok(Expression::Opcode(Opcode::Unknown))
             }
             TokenType::Allocate => Ok(Expression::Opcode(self.allocate()?)),
@@ -108,11 +108,11 @@ impl<'a> Assembler<'a> {
             TokenType::CreatePool => Ok(Expression::Opcode(self.create_pool()?)),
             TokenType::CreatePair => Ok(Expression::Opcode(self.create_pair()?)),
             TokenType::Jump => {
-                self.match_token(TokenType::Jump);
+                self.match_token(TokenType::Jump)?;
                 Ok(Expression::Opcode(Opcode::Jump))
             }
             TokenType::Identifier => {
-                self.match_token(TokenType::Identifier);
+                self.match_token(TokenType::Identifier)?;
                 Ok(Expression::Invocation(current_token.slice))
             }
             _ => panic!("something went wrong"),
@@ -120,70 +120,70 @@ impl<'a> Assembler<'a> {
     }
 
     fn create_pair(&self) -> Result<Opcode, ()> {
-        self.match_token(TokenType::CreatePair);
+        self.match_token(TokenType::CreatePair)?;
         self.match_token(TokenType::Colon)?;
 
-        self.parse_parameter(TokenType::Token0, TokenType::AddressLiteral);
+        self.parse_parameter(TokenType::Token0, TokenType::AddressLiteral)?;
 
-        let token0 = self.tokens[self.cursor.get() - 1]
+        let token_0 = self.tokens[self.cursor.get() - 1]
             .slice
             .parse::<Address>()
             .unwrap();
 
-        self.parse_parameter(TokenType::Token1, TokenType::AddressLiteral);
+        self.parse_parameter(TokenType::Token1, TokenType::AddressLiteral)?;
 
-        let token1 = self.tokens[self.cursor.get() - 1]
+        let token_1 = self.tokens[self.cursor.get() - 1]
             .slice
             .parse::<Address>()
             .unwrap();
 
-        Ok(Opcode::CreatePair { token0, token1 })
+        Ok(Opcode::CreatePair { token_0, token_1 })
     }
 
     fn create_pool(&self) -> Result<Opcode, ()> {
-        self.match_token(TokenType::CreatePool);
+        self.match_token(TokenType::CreatePool)?;
         self.match_token(TokenType::Colon)?;
 
-        self.parse_parameter(TokenType::PairId, TokenType::Literal);
-        let pairId = self.previous_literal()?;
+        self.parse_parameter(TokenType::PairId, TokenType::Literal)?;
+        let pair_id = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Controller, TokenType::AddressLiteral);
+        self.parse_parameter(TokenType::Controller, TokenType::AddressLiteral)?;
 
         let controller = self.tokens[self.cursor.get() - 1]
             .slice
             .parse::<Address>()
             .unwrap();
 
-        self.parse_parameter(TokenType::PriorityFee, TokenType::Literal);
-        let priorityFee = self.previous_literal()?;
+        self.parse_parameter(TokenType::PriorityFee, TokenType::Literal)?;
+        let priority_fee = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Fee, TokenType::Literal);
+        self.parse_parameter(TokenType::Fee, TokenType::Literal)?;
         let fee = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Vol, TokenType::Literal);
+        self.parse_parameter(TokenType::Vol, TokenType::Literal)?;
         let vol = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Dur, TokenType::Literal);
+        self.parse_parameter(TokenType::Dur, TokenType::Literal)?;
         let dur = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Jit, TokenType::Literal);
+        self.parse_parameter(TokenType::Jit, TokenType::Literal)?;
         let jit = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::MaxPrice, TokenType::Literal);
-        let maxPrice = self.previous_literal()?;
+        self.parse_parameter(TokenType::MaxPrice, TokenType::Literal)?;
+        let max_price = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Price, TokenType::Literal);
+        self.parse_parameter(TokenType::Price, TokenType::Literal)?;
         let price = self.previous_literal()?;
 
         Ok(Opcode::CreatePool {
-            pairId,
+            pair_id,
             controller,
-            priorityFee,
+            priority_fee,
             fee,
             vol,
             dur,
             jit,
-            maxPrice,
+            max_price,
             price,
         })
     }
@@ -192,27 +192,27 @@ impl<'a> Assembler<'a> {
         self.match_token(TokenType::Swap)?;
         self.match_token(TokenType::Colon)?;
 
-        self.parse_parameter(TokenType::UseMax, TokenType::Literal);
-        let useMax = self.previous_literal()?;
+        self.parse_parameter(TokenType::UseMax, TokenType::Literal)?;
+        let use_max = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-        let poolId = self.previous_literal()?;
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal)?;
+        let pool_id = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Amount0, TokenType::Literal);
-        let amount0 = self.previous_literal()?;
+        self.parse_parameter(TokenType::Amount0, TokenType::Literal)?;
+        let amount_0 = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Amount1, TokenType::Literal);
-        let amount1 = self.previous_literal()?;
+        self.parse_parameter(TokenType::Amount1, TokenType::Literal)?;
+        let amount_1 = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::SellAsset, TokenType::Literal);
-        let sellAsset = self.previous_literal()?;
+        self.parse_parameter(TokenType::SellAsset, TokenType::Literal)?;
+        let sell_asset = self.previous_literal()?;
 
         Ok(Opcode::Swap {
-            useMax,
-            poolId,
-            amount0,
-            amount1,
-            sellAsset,
+            use_max,
+            pool_id,
+            amount_0,
+            amount_1,
+            sell_asset,
         })
     }
 
@@ -220,35 +220,39 @@ impl<'a> Assembler<'a> {
         self.match_token(TokenType::Claim)?;
         self.match_token(TokenType::Colon)?;
 
-        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-        let poolId = self.previous_literal()?;
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal)?;
+        let pool_id = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Fee0, TokenType::Literal);
-        let fee0 = self.previous_literal()?;
+        self.parse_parameter(TokenType::Fee0, TokenType::Literal)?;
+        let fee_0 = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::Fee1, TokenType::Literal);
-        let fee1 = self.previous_literal()?;
+        self.parse_parameter(TokenType::Fee1, TokenType::Literal)?;
+        let fee_1 = self.previous_literal()?;
 
-        Ok(Opcode::Claim { poolId, fee0, fee1 })
+        Ok(Opcode::Claim {
+            pool_id,
+            fee_0,
+            fee_1,
+        })
     }
 
     fn deallocate(&self) -> Result<Opcode, ()> {
         self.match_token(TokenType::Deallocate)?;
         self.match_token(TokenType::Colon)?;
 
-        self.parse_parameter(TokenType::UseMax, TokenType::Literal);
-        let useMax = self.previous_literal()?;
+        self.parse_parameter(TokenType::UseMax, TokenType::Literal)?;
+        let use_max = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-        let poolId = self.previous_literal()?;
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal)?;
+        let pool_id = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal);
-        let deltaLiquidity = self.previous_literal()?;
+        self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal)?;
+        let delta_liquidity = self.previous_literal()?;
 
         Ok(Opcode::Deallocate {
-            useMax,
-            poolId,
-            deltaLiquidity,
+            use_max,
+            pool_id,
+            delta_liquidity,
         })
     }
 
@@ -256,19 +260,19 @@ impl<'a> Assembler<'a> {
         self.match_token(TokenType::Allocate)?;
         self.match_token(TokenType::Colon)?;
 
-        self.parse_parameter(TokenType::UseMax, TokenType::Literal);
-        let useMax = self.previous_literal()?;
+        self.parse_parameter(TokenType::UseMax, TokenType::Literal)?;
+        let use_max = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::PoolId, TokenType::Literal);
-        let poolId = self.previous_literal()?;
+        self.parse_parameter(TokenType::PoolId, TokenType::Literal)?;
+        let pool_id = self.previous_literal()?;
 
-        self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal);
-        let deltaLiquidity = self.previous_literal()?;
+        self.parse_parameter(TokenType::DeltaLiquidity, TokenType::Literal)?;
+        let delta_liquidity = self.previous_literal()?;
 
         Ok(Opcode::Allocate {
-            useMax,
-            poolId,
-            deltaLiquidity,
+            use_max,
+            pool_id,
+            delta_liquidity,
         })
     }
 }

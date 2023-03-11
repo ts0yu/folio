@@ -133,7 +133,7 @@ impl<'a> Token<'a> {
 
         loop {
             let z = lex.next();
-            if z == None {
+            if z.is_none() {
                 break;
             }
             if !(z.unwrap() == TokenType::Error) {
