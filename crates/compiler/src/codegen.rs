@@ -4,70 +4,58 @@ use bytes::Bytes;
 
 use crate::{
     assembler::{Assembler, Expression, Macro},
-    token::Token,
+    opcode::Opcode,
 };
 
-use ethereum_types::U256;
+use ethers::core::abi::encode_packed;
 
-pub struct Codegen<'a> {
-    macros: HashMap<&'a str, Macro<'a>>,
+use ethabi::token::Token;
+
+use ethereum_types::U256;
+use ethereum_types::H160;
+
+pub struct Codegen {
+    opcodes: Vec<Opcode>,
 }
 
-impl<'a> Codegen<'a> {
+impl<'a> Codegen {
     /// Public constructor function to instantiate a `Codegen`.
-    pub fn new(tokens: Vec<Token<'a>>) -> Self {
-        let opcodes = Assembler::new(tokens);
-        let mut macros = HashMap::new();
+    pub fn new(exprs: Vec<Expression<'a>>) -> Self {
+        let mut opcodes = Vec::new();
 
-        loop {
-            let curr_macro = opcodes.parse_macro();
-
-            match curr_macro {
-                Ok(mac) => {
-                    if macros.get(&mac.name).is_some() {
-                        std::process::exit(1);
-                    } else {
-                        macros.insert(mac.clone().name, mac);
-                    }
-                }
-                Err(_) => break,
+        for i in exprs {
+            match i {
+                Expression::Opcode(o) => opcodes.push(o),
+                _ => panic!("this shouldnt happen"),
             }
         }
 
-        match macros.get(&"main") {
-            Some(_main) => (),
-            None => panic!("no main macro found"),
-        }
+        println!("{opcodes:#?}");
 
-        Self { macros }
+        Self { opcodes }
     }
 
     /// Expand all macros and encode into hex, ready to be executed on the FVM.
     pub fn encode(&self) -> Bytes {
-        let mut main_macro;
-
-        match self.macros.get(&"main") {
-            Some(r#main) => main_macro = r#main.clone(),
-            None => panic!("no main macro found"),
-        }
-
-        for (i, n) in main_macro.clone().body.iter().enumerate() {
-            match n {
-                Expression::Invocation(slice) => {
-                    let replacer = self.macros.get(slice);
-                    let mut index: usize = i;
-
-                    for g in &replacer.unwrap().body {
-                        main_macro.body.insert(index, g.clone());
-                        index += 1;
-                    }
-                }
+        let mut bytes = Bytes::new();
+        
+        for i in &self.opcodes {
+            match i {
+                Opcode::Allocate { use_max, pool_id, delta_liquidity } => continue,
+                Opcode::Deallocate { use_max, pool_id, delta_liquidity } => continue,
+                Opcode::CreatePair { token_0, token_1 } => { 
+                    bytes = Bytes::from(encode_packed(
+                        &[Token::Address(*token_0), 
+                        Token::Address(*token_1)]
+                    ).unwrap());
+                },
+                Opcode::CreatePool { pair_id, controller, priority_fee, fee, vol, dur, jit, max_price, price } => continue,
+                Opcode::Swap { use_max, pool_id, amount_0, amount_1, sell_asset } => continue,
+                Opcode::Claim { pool_id, fee_0, fee_1 } => continue,
+                Opcode::Jump => continue,
                 _ => continue,
             }
         }
-
-        // do the actual encoding stuff here;
-
-        Bytes::new()
+        bytes
     }
 }

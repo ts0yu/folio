@@ -5,6 +5,7 @@ use colored::*;
 use compiler::{
     assembler::{Assembler, Expression, Macro},
     token::{Token, TokenType},
+    codegen::Codegen
 };
 
 #[derive(Parser)]
@@ -93,9 +94,14 @@ fn main() {
 
             println!("{} `{}`", "Compiling".green().bold(), path);
 
-            let opcodes = _main_macro.body;
+            let exprs = _main_macro.body;
 
-            println!("Opcodes: {opcodes:#?}");
+            let codegen = Codegen::new(exprs);
+            let encoded = codegen.encode();
+
+            println!("{encoded:#?}");
+
+            // println!("Opcodes: {opcodes:#?}");
         }
     }
 }
