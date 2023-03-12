@@ -7,6 +7,8 @@ use crate::{
     token::Token,
 };
 
+use ethereum_types::U256;
+
 pub struct Codegen<'a> {
     macros: HashMap<&'a str, Macro<'a>>,
 }
