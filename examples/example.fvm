@@ -20,7 +20,7 @@ macro bar
 		fee1: 01
 
 	deallocate:
-		useMax: 0
+		useMax: 234
 		poolId: 10
 		deltaLiquidity: 10
 

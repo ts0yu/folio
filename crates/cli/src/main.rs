@@ -4,8 +4,8 @@ use clap::{Parser, Subcommand};
 use colored::*;
 use compiler::{
     assembler::{Assembler, Expression, Macro},
+    codegen::Codegen,
     token::{Token, TokenType},
-    codegen::Codegen
 };
 
 #[derive(Parser)]
