@@ -1,4 +1,4 @@
-use std::cell::Cell;
+use std::{cell::Cell, collections::HashMap};
 
 use ethers::types::Address;
 
@@ -77,8 +77,68 @@ impl<'a> Assembler<'a> {
         Ok(literal)
     }
 
+    pub fn parse(tokens: Vec<Token<'a>>) -> Vec<Expression> {
+        let mut main_macro: Macro;
+        let mut occurences: usize = 0;
+        let mut macros = HashMap::new();
+
+        let opcodes = Assembler::new(tokens.clone());
+
+        tokens.clone().into_iter().for_each(|token| {
+            if token.ttype == TokenType::Macro {
+                occurences += 1
+            }
+        });
+
+        for _ in 0..occurences {
+            let mac = opcodes.parse_macro().unwrap();
+
+            if macros.get(&mac.name).is_some() {
+                std::process::exit(1);
+            }
+
+            if macros.get(&mac.name).is_none() {
+                macros.insert(mac.clone().name, mac);
+            }
+        }
+
+        match macros.get(&"main") {
+            Some(r#main) => main_macro = r#main.clone(),
+            None => panic!("no main macro found"),
+        }
+
+        loop {
+            let mut invocation_found = false;
+
+            for (i, n) in main_macro.clone().body.iter().enumerate() {
+                match n {
+                    Expression::Invocation(slice) => {
+                        let replacer = macros.get(slice);
+                        let mut index: usize = i;
+
+                        main_macro.body.remove(i);
+
+                        for g in &replacer.unwrap().body {
+                            main_macro.body.insert(index, g.clone());
+                            index += 1;
+                        }
+
+                        invocation_found = true;
+                    }
+                    _ => continue,
+                }
+            }
+
+            if !invocation_found {
+                break;
+            }
+        }
+
+        main_macro.body
+    }
+
     /// Expand all macros.
-    pub fn parse_macro(&self) -> Result<Macro<'a>, ()> {
+    fn parse_macro(&self) -> Result<Macro<'a>, ()> {
         let mut body: Vec<Expression> = Vec::new();
         let name: &str;
 

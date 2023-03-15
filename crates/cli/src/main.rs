@@ -1,12 +1,7 @@
-use std::{collections::HashMap, fs};
+use std::fs;
 
 use clap::{Parser, Subcommand};
-use colored::*;
-use compiler::{
-    assembler::{Assembler, Expression, Macro},
-    codegen::Codegen,
-    token::{Token, TokenType},
-};
+use compiler::{assembler::Assembler, codegen::Codegen, token::Token};
 
 #[derive(Parser)]
 #[clap(about, version, author)]
@@ -27,73 +22,9 @@ fn main() {
         Commands::Build { path } => {
             let contents = fs::read_to_string(path).unwrap();
             let tokens = Token::lex(&contents);
-            let mut main_macro: Macro;
+            let expressions = Assembler::parse(tokens);
 
-            let mut occurences: usize = 0;
-
-            tokens.clone().into_iter().for_each(|token| {
-                if token.ttype == TokenType::Macro {
-                    occurences += 1
-                }
-            });
-
-            let opcodes = Assembler::new(tokens);
-            let mut macros = HashMap::new();
-
-            for _ in 0..occurences {
-                let mac = opcodes.parse_macro().unwrap();
-
-                if macros.get(&mac.name).is_some() {
-                    println!(
-                        "{}: macro with name `{}` already exists",
-                        "error".red().bold(),
-                        &mac.name
-                    );
-                    std::process::exit(1);
-                }
-
-                if macros.get(&mac.name).is_none() {
-                    macros.insert(mac.clone().name, mac);
-                }
-            }
-
-            match macros.get(&"main") {
-                Some(r#main) => main_macro = r#main.clone(),
-                None => panic!("no main macro found"),
-            }
-
-            loop {
-                let mut invocation_found = false;
-
-                for (i, n) in main_macro.clone().body.iter().enumerate() {
-                    match n {
-                        Expression::Invocation(slice) => {
-                            let replacer = macros.get(slice);
-                            let mut index: usize = i;
-
-                            main_macro.body.remove(i);
-
-                            for g in &replacer.unwrap().body {
-                                main_macro.body.insert(index, g.clone());
-                                index += 1;
-                            }
-
-                            invocation_found = true;
-                        }
-                        _ => continue,
-                    }
-                }
-
-                if !invocation_found {
-                    break;
-                }
-            }
-
-            println!("{} `{}`", "Compiling".green().bold(), path);
-
-            let exprs = main_macro.body;
-
-            let codegen = Codegen::new(exprs);
+            let codegen = Codegen::new(expressions);
             let encoded = codegen.encode();
 
             println!("{encoded:#?}");
