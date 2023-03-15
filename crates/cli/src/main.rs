@@ -100,8 +100,6 @@ fn main() {
             let encoded = codegen.encode();
 
             println!("{encoded:#?}");
-
-            // println!("Opcodes: {opcodes:#?}");
         }
     }
 }

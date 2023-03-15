@@ -75,9 +75,7 @@ impl<'a> Assembler<'a> {
     /// Expand all macros.
     pub fn parse_macro(&self) -> Result<Macro<'a>, ()> {
         let mut body: Vec<Expression> = Vec::new();
-        let mut name: &str = "";
-
-        println!("{:#?}", self.tokens);
+        let name: &str;
 
         self.match_token(TokenType::Macro)?;
         self.match_token(TokenType::Identifier)?;

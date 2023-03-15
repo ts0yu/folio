@@ -1,14 +1,8 @@
-use std::collections::HashMap;
-
 use bytes::Bytes;
 use ethabi::token::Token;
-use ethereum_types::{H160, U256};
 use ethers::core::abi::encode_packed;
 
-use crate::{
-    assembler::{Assembler, Expression, Macro},
-    opcode::Opcode,
-};
+use crate::{assembler::Expression, opcode::Opcode};
 
 pub struct Codegen {
     opcodes: Vec<Opcode>,
@@ -25,8 +19,6 @@ impl<'a> Codegen {
                 _ => panic!("this shouldnt happen"),
             }
         }
-
-        println!("{opcodes:#?}");
 
         Self { opcodes }
     }
