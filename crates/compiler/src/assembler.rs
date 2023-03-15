@@ -7,6 +7,11 @@ use crate::{
     token::{Token, TokenType},
 };
 
+/// # Assembler
+///
+/// The parsing module of Folio.
+/// Convert a [`Vec<Token>`] into an more abstract representation which can be used to generate FVM bytecode.
+
 /// Type representing an Opcode parser.
 #[derive(Debug)]
 pub struct Assembler<'a> {

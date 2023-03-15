@@ -27,10 +27,7 @@ fn main() {
         Commands::Build { path } => {
             let contents = fs::read_to_string(path).unwrap();
             let tokens = Token::lex(&contents);
-            let mut _main_macro: Macro = Macro {
-                name: "",
-                body: Vec::new(),
-            };
+            let mut main_macro: Macro;
 
             let mut occurences: usize = 0;
 
@@ -61,23 +58,23 @@ fn main() {
             }
 
             match macros.get(&"main") {
-                Some(r#main) => _main_macro = r#main.clone(),
+                Some(r#main) => main_macro = r#main.clone(),
                 None => panic!("no main macro found"),
             }
 
             loop {
                 let mut invocation_found = false;
 
-                for (i, n) in _main_macro.clone().body.iter().enumerate() {
+                for (i, n) in main_macro.clone().body.iter().enumerate() {
                     match n {
                         Expression::Invocation(slice) => {
                             let replacer = macros.get(slice);
                             let mut index: usize = i;
 
-                            _main_macro.body.remove(i);
+                            main_macro.body.remove(i);
 
                             for g in &replacer.unwrap().body {
-                                _main_macro.body.insert(index, g.clone());
+                                main_macro.body.insert(index, g.clone());
                                 index += 1;
                             }
 
@@ -94,7 +91,7 @@ fn main() {
 
             println!("{} `{}`", "Compiling".green().bold(), path);
 
-            let exprs = _main_macro.body;
+            let exprs = main_macro.body;
 
             let codegen = Codegen::new(exprs);
             let encoded = codegen.encode();
