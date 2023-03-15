@@ -5,31 +5,17 @@ macro main
 
 macro foo 
 {
-	claim:
-		poolId: 1 
-		fee0: 2 
-		fee1: 003
 	bar
 }
 
 macro bar
 {
-	claim:
-		poolId: 0 
-		fee0: 2 
-		fee1: 01
-
-	deallocate:
-		useMax: 234
-		poolId: 10
-		deltaLiquidity: 10
-
-	allocate:
-		useMax: 1
-		poolId: 10
-		deltaLiquidity: 100
-
 	create_pair:
 		token0: 0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
 		token1: 0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
+
+	allocate:
+		useMax: 155
+		poolId: 100
+		deltaLiquidity: 994
 }

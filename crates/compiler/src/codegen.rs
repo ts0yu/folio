@@ -23,6 +23,24 @@ impl<'a> Codegen {
         Self { opcodes }
     }
 
+    fn from_amount(amount: usize) -> (usize, usize) {
+        if amount == 0 { return (0, 0) };
+
+        let mut base = amount;
+        let mut power = 0;
+
+        while base % 10 == 0 {
+            power += 1;
+            base /= 10;
+        }
+
+        (power, base)
+    }
+
+    fn pack(upper: usize, lower: usize) -> usize {
+        (upper << 4) | lower
+    }
+
     /// Expand all macros and encode into hex, ready to be executed on the FVM.
     pub fn encode(&self) -> Vec<Bytes> {
         let mut bytes = Vec::new();
@@ -34,11 +52,14 @@ impl<'a> Codegen {
                     pool_id,
                     delta_liquidity,
                 } => {
+                    let (power, base) = Codegen::from_amount(*delta_liquidity);
+
                     bytes.push(Bytes::from(
                         encode_packed(&[
-                            Token::Int((*use_max).into()),
+                            Token::Int(Codegen::pack(*use_max, 1).into()),
                             Token::Int((*pool_id).into()),
-                            Token::Int((*delta_liquidity).into()),
+                            Token::Int(power.into()),
+                            Token::Int(base.into()),
                         ])
                         .unwrap(),
                     ));
@@ -58,8 +79,10 @@ impl<'a> Codegen {
                     ));
                 }
                 Opcode::CreatePair { token_0, token_1 } => {
+                    let create_pair = 12;
+
                     bytes.push(Bytes::from(
-                        encode_packed(&[Token::Address(*token_0), Token::Address(*token_1)])
+                        encode_packed(&[Token::Int(create_pair.into()), Token::Address(*token_0), Token::Address(*token_1)])
                             .unwrap(),
                     ));
                 }
