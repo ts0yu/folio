@@ -1,5 +1,10 @@
 macro main 
 {
+	unknown
+	allocate:
+		useMax: 45
+		poolId: 101
+		deltaLiquidity: 3
 	foo
 }
 

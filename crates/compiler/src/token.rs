@@ -141,6 +141,8 @@ impl<'a> Token<'a> {
             };
         }
 
+        println!("{tokens:#?}");
+
         tokens
     }
 }

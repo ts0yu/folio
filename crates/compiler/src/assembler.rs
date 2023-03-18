@@ -58,7 +58,7 @@ impl<'a> Assembler<'a> {
         } else {
             Err(())
         }
-    }
+    } 
 
     fn parse_parameter(&self, key: TokenType, value: TokenType) -> Result<(), ()> {
         self.match_token(key)?;
@@ -134,7 +134,11 @@ impl<'a> Assembler<'a> {
             }
         }
 
-        main_macro.body
+        let body = main_macro.body;
+
+        println!("{body:#?}");
+
+        body
     }
 
     /// Expand all macros.
@@ -153,7 +157,10 @@ impl<'a> Assembler<'a> {
 
         self.match_token(TokenType::CloseBrace)?;
 
-        Ok(Macro { name, body })
+        let _macro = Macro { name, body };
+        println!("{_macro:#?}");
+
+        Ok(_macro)
     }
 
     fn parse_expression(&self) -> Result<Expression<'a>, ()> {
