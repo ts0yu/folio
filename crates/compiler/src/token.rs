@@ -19,10 +19,10 @@ pub enum TokenType {
     #[token("swap")]
     Swap,
 
-    #[token("create_pool")]
+    #[token("createPool")]
     CreatePool,
 
-    #[token("create_pair")]
+    #[token("createPair")]
     CreatePair,
 
     #[token("jump")]

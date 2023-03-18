@@ -1,10 +1,5 @@
 macro main 
 {
-	unknown
-	allocate:
-		useMax: 45
-		poolId: 101
-		deltaLiquidity: 3
 	foo
 }
 
@@ -15,12 +10,8 @@ macro foo
 
 macro bar
 {
-	create_pair:
-		token0: 0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
-		token1: 0xdAB0A5d15ff6B75E69256c29609d2Fc3eBbFEb04
-
-	allocate:
-		useMax: 155
-		poolId: 100
-		deltaLiquidity: 994
+	claim:
+		poolId: 1
+		fee0: 1
+		fee1: 1
 }
