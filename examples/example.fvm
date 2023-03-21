@@ -11,7 +11,7 @@ macro foo
 macro bar
 {
 	claim:
-		poolId: 1
+		poolId: 567
 		fee0: 1
-		fee1: 1
+		fee1: 1 
 }

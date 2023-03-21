@@ -2,6 +2,8 @@ use bytes::Bytes;
 use ethabi::token::Token;
 use ethers::core::abi::encode_packed;
 
+use ethereum_types::U256;
+
 use crate::{assembler::Expression, opcode::Opcode};
 
 pub struct Codegen {
@@ -153,20 +155,18 @@ impl<'a> Codegen {
                     fee_1,
                 } => {
                     let claim = 4;
-                    let pointer = 8;
 
                     let (power_fee0, base_fee0) = Codegen::from_amount(*fee_0);
                     let (power_fee1, base_fee1) = Codegen::from_amount(*fee_1);
 
                     bytes.push(Bytes::from(
                         encode_packed(&[
-                            Token::Int(claim.into()),
-                            Token::Int((*pool_id).into()),
-                            Token::Int(pointer.into()),
-                            Token::Int((power_fee0).into()),
-                            Token::Int((base_fee0).into()),
-                            Token::Int((power_fee1).into()),
-                            Token::Int((base_fee1).into()),
+                            Token::Int(U256([*pool_id as u64, claim as u64, 0, 0])),
+                            Token::Int(U256([27, 0, 0, 0])),
+                            Token::Int(U256([power_fee0, base_fee0, 0, 0])),
+                            // Token::Int((base_fee0).into()),
+                            // Token::Int((power_fee1).into()),
+                            // Token::Int((base_fee1).into()),
                         ])
                         .unwrap(),
                     ));

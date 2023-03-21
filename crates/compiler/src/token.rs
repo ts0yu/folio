@@ -119,7 +119,6 @@ pub enum TokenType {
 pub struct Token<'a> {
     pub ttype: TokenType,
     pub slice: &'a str,
-	pub span: Range<usize>
 }
 
 impl<'a> Token<'a> {
@@ -139,7 +138,7 @@ impl<'a> Token<'a> {
                 break;
             }
             if !(z.unwrap() == TokenType::Error) {
-                tokens.push(Self::new(z.unwrap(), lex.slice(), lex.span()))
+                tokens.push(Self::new(z.unwrap(), lex.slice()))
             };
         }
 
