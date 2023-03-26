@@ -27,13 +27,13 @@ fn main() {
             let expressions = Assembler::parse(tokens);
 
             let codegen = Codegen::new(expressions);
-            let encoded = codegen.encode();
+            let encoded = Codegen::generate(codegen.encode());
 
             let duration = start.elapsed();
 
             println!("Compilation finished in: {duration:?}");
 
-            println!("{encoded:#?}");
+            println!("{encoded}");
         }
     }
 }
