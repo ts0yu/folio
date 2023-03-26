@@ -1,6 +1,6 @@
 use std::{cell::Cell, collections::HashMap};
 
-use ethers::types::Address;
+use eth_encode_packed::ethabi::ethereum_types::Address;
 
 use crate::{
     opcode::Opcode,
@@ -58,7 +58,7 @@ impl<'a> Assembler<'a> {
         } else {
             Err(())
         }
-    } 
+    }
 
     fn parse_parameter(&self, key: TokenType, value: TokenType) -> Result<(), ()> {
         self.match_token(key)?;
@@ -136,7 +136,7 @@ impl<'a> Assembler<'a> {
 
         let body = main_macro.body;
 
-        println!("{body:#?}");
+        // println!("{body:#?}");
 
         body
     }
@@ -158,7 +158,7 @@ impl<'a> Assembler<'a> {
         self.match_token(TokenType::CloseBrace)?;
 
         let _macro = Macro { name, body };
-        println!("{_macro:#?}");
+        // println!("{_macro:#?}");
 
         Ok(_macro)
     }

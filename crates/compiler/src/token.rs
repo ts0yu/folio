@@ -1,5 +1,4 @@
 use logos::Logos;
-use std::ops::Range;
 
 /// Represents a token type.
 /// All opcode descriptions are taken from the FVM Yellowpaper.
@@ -142,7 +141,7 @@ impl<'a> Token<'a> {
             };
         }
 
-        println!("{tokens:#?}");
+        // println!("{tokens:#?}");
 
         tokens
     }

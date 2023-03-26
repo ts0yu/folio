@@ -20,12 +20,18 @@ fn main() {
 
     match &value.command {
         Commands::Build { path } => {
+            let start = std::time::Instant::now();
+
             let contents = fs::read_to_string(path).unwrap();
             let tokens = Token::lex(&contents);
             let expressions = Assembler::parse(tokens);
 
             let codegen = Codegen::new(expressions);
             let encoded = codegen.encode();
+
+            let duration = start.elapsed();
+
+            println!("Compilation finished in: {duration:?}");
 
             println!("{encoded:#?}");
         }

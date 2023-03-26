@@ -1,4 +1,4 @@
-use ethers::types::H160;
+use eth_encode_packed::ethabi::ethereum_types::{Address};
 
 #[derive(Debug, Clone)]
 pub enum Opcode {
@@ -23,13 +23,13 @@ pub enum Opcode {
     },
 
     /// This instruction is used to initialize a new pair of assets for which pools can be created.    
-    CreatePair { token_0: H160, token_1: H160 },
+    CreatePair { token_0: Address, token_1: Address },
 
     /// This instruction is used to create a new pool.
     /// Initially, pools are not deployed with any capital, but are deployed with parameters for the CFMM as well as an initial price.    
     CreatePool {
         pair_id: usize,
-        controller: H160,
+        controller: Address,
         priority_fee: usize,
         fee: usize,
         vol: usize,
