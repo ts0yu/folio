@@ -27,6 +27,10 @@ fn main() {
             let expressions = Assembler::parse(tokens);
 
             let codegen = Codegen::new(expressions);
+            let encoded = codegen.encode();
+
+            println!("{encoded:#?}");
+
             let encoded = Codegen::generate(codegen.encode());
 
             let duration = start.elapsed();

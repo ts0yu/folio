@@ -1,4 +1,5 @@
 use logos::Logos;
+use crate::diagnostics::Diagnostics;
 
 /// Represents a token type.
 /// All opcode descriptions are taken from the FVM Yellowpaper.
@@ -136,7 +137,18 @@ impl<'a> Token<'a> {
             if z.is_none() {
                 break;
             }
-            if !(z.unwrap() == TokenType::Error) {
+            if z.unwrap() == TokenType::Error {
+                Diagnostics::emit(
+                    String::from(raw),
+                    String::from("example.fvm"),
+                    lex.span().start as u64,
+                    lex.span().end as u64,
+                    "invalid token".to_string(),
+                    "invalid".to_string(),
+                    "E000".to_string(),
+                );
+                break;
+            } else {
                 tokens.push(Self::new(z.unwrap(), lex.slice()))
             };
         }
