@@ -1,3 +1,5 @@
+#![warn(missing_docs)]
+
 use std::{cell::Cell, collections::HashMap};
 
 use eth_encode_packed::ethabi::ethereum_types::Address;
@@ -10,7 +12,8 @@ use crate::{
 /// # Assembler
 ///
 /// The parsing module of Folio.
-/// Convert a [`Vec<Token>`] into an more abstract representation which can be used to generate FVM bytecode.
+/// Convert a [`Vec<Token>`] into a abstract syntax tree.
+/// This can be used by downstream code generation modules to generate FVM bytecode.
 
 /// Type representing an Opcode parser.
 #[derive(Debug)]
@@ -47,34 +50,6 @@ impl<'a> Assembler<'a> {
             tokens,
             cursor: Cell::new(0),
         }
-    }
-
-    fn match_token(&self, expected: TokenType) -> Result<(), ()> {
-        if self.tokens[self.cursor.get()].ttype == expected {
-            let mut curr = self.cursor.get();
-            curr += 1;
-            self.cursor.set(curr);
-            Ok(())
-        } else {
-            Err(())
-        }
-    }
-
-    fn parse_parameter(&self, key: TokenType, value: TokenType) -> Result<(), ()> {
-        self.match_token(key)?;
-        self.match_token(TokenType::Colon)?;
-        self.match_token(value)?;
-
-        Ok(())
-    }
-
-    fn previous_literal(&self) -> Result<usize, ()> {
-        let literal = self.tokens[self.cursor.get() - 1]
-            .slice
-            .parse::<usize>()
-            .unwrap();
-
-        Ok(literal)
     }
 
     pub fn parse(tokens: Vec<Token<'a>>) -> Vec<Expression> {
@@ -141,6 +116,34 @@ impl<'a> Assembler<'a> {
         body
     }
 
+    fn match_token(&self, expected: TokenType) -> Result<(), ()> {
+        if self.tokens[self.cursor.get()].ttype == expected {
+            let mut curr = self.cursor.get();
+            curr += 1;
+            self.cursor.set(curr);
+            Ok(())
+        } else {
+            Err(())
+        }
+    }
+
+    fn parse_parameter(&self, key: TokenType, value: TokenType) -> Result<(), ()> {
+        self.match_token(key)?;
+        self.match_token(TokenType::Colon)?;
+        self.match_token(value)?;
+
+        Ok(())
+    }
+
+    fn previous_literal(&self) -> Result<usize, ()> {
+        let literal = self.tokens[self.cursor.get() - 1]
+            .slice
+            .parse::<usize>()
+            .unwrap();
+
+        Ok(literal)
+    }
+
     /// Expand all macros.
     fn parse_macro(&self) -> Result<Macro<'a>, ()> {
         let mut body: Vec<Expression> = Vec::new();
@@ -158,7 +161,6 @@ impl<'a> Assembler<'a> {
         self.match_token(TokenType::CloseBrace)?;
 
         let _macro = Macro { name, body };
-        // println!("{_macro:#?}");
 
         Ok(_macro)
     }

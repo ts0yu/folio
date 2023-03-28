@@ -1,3 +1,5 @@
+#![warn(missing_docs)]
+
 use bytes::Bytes;
 use eth_encode_packed::{
     abi,
@@ -7,7 +9,14 @@ use eth_encode_packed::{
 
 use crate::{assembler::Expression, opcode::Opcode};
 
+/// # Codegen
+///
+/// The bytecode generation module of folio.
+/// [`Codegen`] takes in a vector of Expressions and returns a hex string, which can be executed on the FVM.
+
+/// Code generation struct.
 pub struct Codegen {
+    /// Set of opcodes to generate bytecode from.
     opcodes: Vec<Opcode>,
 }
 

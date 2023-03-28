@@ -1,5 +1,12 @@
+#![warn(missing_docs)]
+
 use logos::Logos;
-use crate::diagnostics::Diagnostics;
+
+/// # Token
+///
+/// This module exposes a lexer, and a token type.
+/// It is instantiated with a raw source string, and converts it into a vector of Tokens.
+/// This is the first stage of the folio compiler.
 
 /// Represents a token type.
 /// All opcode descriptions are taken from the FVM Yellowpaper.
@@ -138,15 +145,6 @@ impl<'a> Token<'a> {
                 break;
             }
             if z.unwrap() == TokenType::Error {
-                Diagnostics::emit(
-                    String::from(raw),
-                    String::from("example.fvm"),
-                    lex.span().start as u64,
-                    lex.span().end as u64,
-                    "invalid token".to_string(),
-                    "invalid".to_string(),
-                    "E000".to_string(),
-                );
                 break;
             } else {
                 tokens.push(Self::new(z.unwrap(), lex.slice()))

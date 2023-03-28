@@ -1,5 +1,9 @@
+#![warn(missing_docs)]
+
 use eth_encode_packed::ethabi::ethereum_types::{Address};
 
+/// Type representing an FVM opcode.
+/// This is the lowest level representation folio code will be lowered to, before bytecode is generated from it.
 #[derive(Debug, Clone)]
 pub enum Opcode {
     /// This is the default opcode. It is used to represent an unknown opcode,
