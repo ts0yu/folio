@@ -1,5 +1,3 @@
-#![warn(missing_docs)]
-
 use eth_encode_packed::ethabi::ethereum_types::{Address};
 
 /// Type representing an FVM opcode.

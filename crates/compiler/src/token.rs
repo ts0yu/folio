@@ -1,5 +1,3 @@
-#![warn(missing_docs)]
-
 use logos::Logos;
 
 /// # Token
@@ -144,14 +142,10 @@ impl<'a> Token<'a> {
             if z.is_none() {
                 break;
             }
-            if z.unwrap() == TokenType::Error {
-                break;
-            } else {
+            if !(z.unwrap() == TokenType::Error) {
                 tokens.push(Self::new(z.unwrap(), lex.slice()))
             };
         }
-
-        // println!("{tokens:#?}");
 
         tokens
     }
