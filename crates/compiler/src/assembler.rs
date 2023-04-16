@@ -110,8 +110,6 @@ impl<'a> Assembler<'a> {
             }
         }
 
-        
-
         // println!("{body:#?}");
 
         main_macro.body
@@ -148,7 +146,6 @@ impl<'a> Assembler<'a> {
     /// Expand all macros.
     fn parse_macro(&self) -> Result<Macro<'a>, ()> {
         let mut body: Vec<Expression> = Vec::new();
-        
 
         self.match_token(TokenType::Macro)?;
         self.match_token(TokenType::Identifier)?;
