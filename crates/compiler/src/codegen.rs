@@ -1,15 +1,4 @@
-<<<<<<< Updated upstream
-#![warn(missing_docs)]
-
-use bytes::Bytes;
-use eth_encode_packed::{
-    abi,
-    ethabi::ethereum_types::{Address, U256},
-    hex, SolidityDataType, TakeLastXBytes,
-};
-=======
 use eth_encode_packed::{abi, ethabi::ethereum_types::U256, SolidityDataType, TakeLastXBytes};
->>>>>>> Stashed changes
 
 use crate::{assembler::Expression, opcode::Opcode};
 
