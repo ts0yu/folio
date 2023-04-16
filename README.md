@@ -1,5 +1,6 @@
 # folio 📖
-
+![Github Actions](https://github.com/primitivefinance/arbiter/workflows/Rust/badge.svg)
+![](https://visitor-badge.laobi.icu/badge?page_id=ts0yu.folio)
 ## overview
 
 folio provides a fast, simple abstraction and work-in-progress compiler for the [FVM](https://www.primitive.xyz/papers/yellow.pdf) (Financial Virtual Machine). 
