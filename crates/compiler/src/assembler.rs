@@ -52,6 +52,7 @@ impl<'a> Assembler<'a> {
         }
     }
 
+    /// Parse a vector of tokens, lexed from a source file, into an AST.
     pub fn parse(tokens: Vec<Token<'a>>) -> Vec<Expression> {
         let mut main_macro: Macro;
         let mut occurences: usize = 0;

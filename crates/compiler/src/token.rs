@@ -1,5 +1,3 @@
-#![warn(missing_docs)]
-
 use logos::Logos;
 
 /// # Token
