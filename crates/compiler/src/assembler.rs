@@ -1,5 +1,3 @@
-#![warn(missing_docs)]
-
 use std::{cell::Cell, collections::HashMap};
 
 use eth_encode_packed::ethabi::ethereum_types::Address;
