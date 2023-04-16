@@ -1,5 +1,6 @@
 # folio 📖
 ![Github Actions](https://github.com/primitivefinance/arbiter/workflows/Rust/badge.svg)
+[![](https://dcbadge.vercel.app/api/server/primitive?style=flat)](https://discord.gg/primitive)
 ![](https://visitor-badge.laobi.icu/badge?page_id=ts0yu.folio)
 ## overview
 
