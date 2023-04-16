@@ -109,11 +109,11 @@ impl<'a> Assembler<'a> {
             }
         }
 
-        let body = main_macro.body;
+        
 
         // println!("{body:#?}");
 
-        body
+        main_macro.body
     }
 
     fn match_token(&self, expected: TokenType) -> Result<(), ()> {
@@ -147,11 +147,11 @@ impl<'a> Assembler<'a> {
     /// Expand all macros.
     fn parse_macro(&self) -> Result<Macro<'a>, ()> {
         let mut body: Vec<Expression> = Vec::new();
-        let name: &str;
+        
 
         self.match_token(TokenType::Macro)?;
         self.match_token(TokenType::Identifier)?;
-        name = self.tokens[self.cursor.get() - 1].slice;
+        let name: &str = self.tokens[self.cursor.get() - 1].slice;
         self.match_token(TokenType::OpenBrace)?;
 
         while self.tokens[self.cursor.get()].ttype != TokenType::CloseBrace {
