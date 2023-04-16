@@ -3,3 +3,5 @@ members = [
     "crates/compiler",
     "crates/cli"
 ]
+
+exclude = ["examples"]
