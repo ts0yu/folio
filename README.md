@@ -24,3 +24,8 @@ example usage of the folio compiler can be found within the [`/examples`](https:
     -  `codegen.rs` -> code generation module
     -  `opcode/rs` -> defines a set of FVM primitive types
     -  `token.rs` -> lexical analysis and token definition
+
+## contact
+
+- [email](mailto:ts0yu@proton.me)
+- [discord](https://discord.gg/primitive)
