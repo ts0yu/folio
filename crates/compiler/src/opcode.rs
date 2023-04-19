@@ -1,4 +1,4 @@
-use eth_encode_packed::ethabi::ethereum_types::{Address};
+use eth_encode_packed::ethabi::ethereum_types::Address;
 
 /// Type representing an FVM opcode.
 /// This is the lowest level representation folio code will be lowered to, before bytecode is generated from it.

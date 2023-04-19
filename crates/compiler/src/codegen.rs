@@ -1,8 +1,4 @@
-use eth_encode_packed::{
-    abi,
-    ethabi::ethereum_types::U256,
-    SolidityDataType, TakeLastXBytes,
-};
+use eth_encode_packed::{abi, ethabi::ethereum_types::U256, SolidityDataType, TakeLastXBytes};
 
 use crate::{assembler::Expression, opcode::Opcode};
 
@@ -168,12 +164,7 @@ impl<'a> Codegen {
                     amount_1,
                     sell_asset,
                 } => {
-                    let swap;
-                    if *sell_asset == 1 {
-                        swap = 6;
-                    } else {
-                        swap = 5;
-                    }
+                    let swap = if *sell_asset == 1 { 6 } else { 5 };
 
                     let (power0, base0) = Codegen::from_amount(*amount_0);
                     let (power1, base1) = Codegen::from_amount(*amount_1);
