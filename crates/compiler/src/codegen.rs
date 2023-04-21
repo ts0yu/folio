@@ -28,20 +28,20 @@ impl<'a> Codegen {
         Self { opcodes }
     }
 
-    fn from_amount(amount: usize) -> (usize, usize) {
-        if amount == 0 {
-            return (0, 0);
+    fn from_amount(amount: U256) -> (U256, U256) {
+        if amount == U256::from(0) {
+            return (U256::from(0), U256::from(0));
         };
 
         let mut base = amount;
         let mut power = 0;
 
-        while base % 10 == 0 {
+        while base % 10 == U256::from(0) {
             power += 1;
             base /= 10;
         }
 
-        (power, base)
+        (U256::from(power), base)
     }
 
     pub fn generate(instructions: Vec<String>) -> String {
@@ -56,7 +56,7 @@ impl<'a> Codegen {
         payload
     }
 
-    fn pack(upper: usize, lower: usize) -> usize {
+    fn pack(upper: U256, lower: U256) -> U256 {
         (upper << 4) | lower
     }
 
@@ -72,8 +72,7 @@ impl<'a> Codegen {
                     delta_liquidity,
                 } => {
                     let (power, base) = Codegen::from_amount(*delta_liquidity);
-                    let allocate = 1;
-                    let packed = Codegen::pack((*use_max as u8).into(), (allocate as u8).into());
+                    let packed = Codegen::pack(*use_max, U256::from(1));
 
                     let (_encoded, hash) = abi::encode_packed(&[
                         SolidityDataType::NumberWithShift(U256::from(packed), TakeLastXBytes(8)),
@@ -91,11 +90,11 @@ impl<'a> Codegen {
                 } => {
                     let (power, base) = Codegen::from_amount(*delta_liquidity);
                     let deallocate = 3;
-                    let packed = Codegen::pack((*use_max as u8).into(), (deallocate as u8).into());
+                    let packed = Codegen::pack(*use_max, U256::from(deallocate));
 
                     let (_encoded, hash) = abi::encode_packed(&[
                         SolidityDataType::NumberWithShift(U256::from(packed), TakeLastXBytes(8)),
-                        SolidityDataType::NumberWithShift(U256::from(*pool_id), TakeLastXBytes(64)),
+                        SolidityDataType::NumberWithShift(*pool_id, TakeLastXBytes(64)),
                         SolidityDataType::NumberWithShift(U256::from(power), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(U256::from(base), TakeLastXBytes(128)),
                     ]);
@@ -138,16 +137,13 @@ impl<'a> Codegen {
                             U256::from(create_pool),
                             TakeLastXBytes(8),
                         ),
-                        SolidityDataType::NumberWithShift(U256::from(*pair_id), TakeLastXBytes(24)),
+                        SolidityDataType::NumberWithShift(*pair_id, TakeLastXBytes(24)),
                         SolidityDataType::Address(*controller),
-                        SolidityDataType::NumberWithShift(
-                            U256::from(*priority_fee),
-                            TakeLastXBytes(16),
-                        ),
-                        SolidityDataType::NumberWithShift(U256::from(*fee), TakeLastXBytes(16)),
-                        SolidityDataType::NumberWithShift(U256::from(*vol), TakeLastXBytes(16)),
-                        SolidityDataType::NumberWithShift(U256::from(*dur), TakeLastXBytes(16)),
-                        SolidityDataType::NumberWithShift(U256::from(*jit), TakeLastXBytes(16)),
+                        SolidityDataType::NumberWithShift(*priority_fee, TakeLastXBytes(16)),
+                        SolidityDataType::NumberWithShift(*fee, TakeLastXBytes(16)),
+                        SolidityDataType::NumberWithShift(*vol, TakeLastXBytes(16)),
+                        SolidityDataType::NumberWithShift(*dur, TakeLastXBytes(16)),
+                        SolidityDataType::NumberWithShift(*jit, TakeLastXBytes(16)),
                         SolidityDataType::NumberWithShift(U256::from(pointer), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(U256::from(power0), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(U256::from(base0), TakeLastXBytes(128)),
@@ -164,16 +160,20 @@ impl<'a> Codegen {
                     amount_1,
                     sell_asset,
                 } => {
-                    let swap = if *sell_asset == 1 { 6 } else { 5 };
+                    let swap = if *sell_asset == U256::from(1) {
+                        U256::from(6)
+                    } else {
+                        U256::from(5)
+                    };
 
                     let (power0, base0) = Codegen::from_amount(*amount_0);
                     let (power1, base1) = Codegen::from_amount(*amount_1);
 
-                    let packed = Codegen::pack((*use_max as u8).into(), (swap as u8).into());
+                    let packed = Codegen::pack(*use_max, swap);
 
                     let (_encoded, hash) = abi::encode_packed(&[
                         SolidityDataType::NumberWithShift(U256::from(packed), TakeLastXBytes(8)),
-                        SolidityDataType::NumberWithShift(U256::from(*pool_id), TakeLastXBytes(64)),
+                        SolidityDataType::NumberWithShift(*pool_id, TakeLastXBytes(64)),
                         SolidityDataType::NumberWithShift(U256::from(27), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(U256::from(power0), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(U256::from(base0), TakeLastXBytes(128)),
@@ -194,7 +194,7 @@ impl<'a> Codegen {
 
                     let (_encoded, hash) = abi::encode_packed(&[
                         SolidityDataType::NumberWithShift(U256::from(claim), TakeLastXBytes(8)),
-                        SolidityDataType::NumberWithShift(U256::from(*pool_id), TakeLastXBytes(64)),
+                        SolidityDataType::NumberWithShift(*pool_id, TakeLastXBytes(64)),
                         SolidityDataType::NumberWithShift(U256::from(27), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(
                             U256::from(power_fee0),

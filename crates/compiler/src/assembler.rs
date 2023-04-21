@@ -1,6 +1,6 @@
 use std::{cell::Cell, collections::HashMap};
 
-use eth_encode_packed::ethabi::ethereum_types::Address;
+use eth_encode_packed::ethabi::ethereum_types::{Address, U256};
 
 use crate::{
     opcode::Opcode,
@@ -132,11 +132,8 @@ impl<'a> Assembler<'a> {
         Ok(())
     }
 
-    fn previous_literal(&self) -> Result<usize, ()> {
-        let literal = self.tokens[self.cursor.get() - 1]
-            .slice
-            .parse::<usize>()
-            .unwrap();
+    fn previous_literal(&self) -> Result<U256, ()> {
+        let literal = U256::from_dec_str(self.tokens[self.cursor.get() - 1].slice).unwrap();
 
         Ok(literal)
     }
