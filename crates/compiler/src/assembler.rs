@@ -25,6 +25,7 @@ pub struct Assembler<'a> {
 /// Represents an expression.
 /// An expression is a node in the AST, parsed inside macros.
 #[derive(Clone, Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum Expression<'a> {
     /// An opcode.
     Opcode(Opcode),
