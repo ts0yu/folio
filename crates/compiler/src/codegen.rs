@@ -196,22 +196,10 @@ impl<'a> Codegen {
                         SolidityDataType::NumberWithShift(U256::from(claim), TakeLastXBytes(8)),
                         SolidityDataType::NumberWithShift(*pool_id, TakeLastXBytes(64)),
                         SolidityDataType::NumberWithShift(U256::from(27), TakeLastXBytes(8)),
-                        SolidityDataType::NumberWithShift(
-                            power_fee0,
-                            TakeLastXBytes(8),
-                        ),
-                        SolidityDataType::NumberWithShift(
-                            base_fee0,
-                            TakeLastXBytes(128),
-                        ),
-                        SolidityDataType::NumberWithShift(
-                            power_fee1,
-                            TakeLastXBytes(8),
-                        ),
-                        SolidityDataType::NumberWithShift(
-                            base_fee1,
-                            TakeLastXBytes(128),
-                        ),
+                        SolidityDataType::NumberWithShift(power_fee0, TakeLastXBytes(8)),
+                        SolidityDataType::NumberWithShift(base_fee0, TakeLastXBytes(128)),
+                        SolidityDataType::NumberWithShift(power_fee1, TakeLastXBytes(8)),
+                        SolidityDataType::NumberWithShift(base_fee1, TakeLastXBytes(128)),
                     ]);
                     bytes.push(hash);
                 }
